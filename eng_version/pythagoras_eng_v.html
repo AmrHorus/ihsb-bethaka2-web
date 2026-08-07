@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نظرية فيثاغورس - إحسب بذكاء</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Amiri', serif;
+      background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 50%, #b39ddb 100%);
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    nav {
+      background: linear-gradient(90deg, #4527a0, #512da8, #4527a0);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+      direction: rtl;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: "Aref Ruqaa", serif;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-logo i {
+      font-size: 28px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(135deg, #512da8, #4527a0);
+      color: white;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.3;
+    }
+
+    .hero h1 {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 42px;
+      margin-bottom: 15px;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.8;
+      position: relative;
+      opacity: 0.95;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      padding: 0 10px;
+    }
+
+    .calc-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #4527a0, #7e57c2, #4527a0);
+    }
+
+    .calc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #e0e0e0;
+    }
+
+    .calc-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #4527a0, #7e57c2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(69, 39, 160, 0.3);
+    }
+
+    .calc-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 24px;
+      color: #4527a0;
+    }
+
+    .calc-desc {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      background: #f3e5f5;
+      border-radius: 10px;
+      border-right: 4px solid #7e57c2;
+    }
+
+    .formula-box {
+      background: linear-gradient(135deg, #4527a0, #512da8);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: "Aref Ruqaa", serif;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(69, 39, 160, 0.2);
+      position: relative;
+    }
+
+    .formula-box .formula-sub {
+      font-size: 14px;
+      margin-top: 8px;
+      opacity: 0.9;
+      font-family: 'Amiri', serif;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 16px;
+      font-family: 'Amiri', serif;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #7e57c2;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4527a0, #7e57c2);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      font-family: "Aref Ruqaa", serif;
+      font-weight: 700;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(69, 39, 160, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(69, 39, 160, 0.4);
+    }
+
+    .calc-btn:active {
+      transform: translateY(0);
+    }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #ede7f6, #d1c4e9);
+      border-radius: 12px;
+      border: 1px solid #b39ddb;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result-box.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .final-result {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 22px;
+      color: #4527a0;
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .steps-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 18px;
+      color: #4527a0;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .steps-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .steps-list li {
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 8px;
+      border-right: 3px solid #7e57c2;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      transition: transform 0.2s ease;
+      animation: slideIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .steps-list li:nth-child(1) { animation-delay: 0.1s; }
+    .steps-list li:nth-child(2) { animation-delay: 0.2s; }
+    .steps-list li:nth-child(3) { animation-delay: 0.3s; }
+    .steps-list li:nth-child(4) { animation-delay: 0.4s; }
+    .steps-list li:nth-child(5) { animation-delay: 0.5s; }
+    .steps-list li:nth-child(6) { animation-delay: 0.6s; }
+    .steps-list li:nth-child(7) { animation-delay: 0.7s; }
+    .steps-list li:nth-child(8) { animation-delay: 0.8s; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .steps-list li:hover {
+      transform: translateX(-5px);
+      background: #f3e5f5;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #4527a0;
+      color: white;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: bold;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .triangle-visual {
+      width: 100%;
+      height: 200px;
+      margin-top: 15px;
+      position: relative;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .triangle-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .triangle-label {
+      font-size: 14px;
+      font-weight: bold;
+      fill: #4527a0;
+    }
+
+    .triangle-side {
+      stroke: #4527a0;
+      stroke-width: 3;
+      fill: none;
+    }
+
+    .triangle-fill {
+      fill: rgba(126, 87, 194, 0.15);
+      stroke: none;
+    }
+
+    .triangle-right-angle {
+      fill: none;
+      stroke: #e53935;
+      stroke-width: 2;
+    }
+
+    .squares-visual {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      min-height: 150px;
+    }
+
+    .square-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .square-shape {
+      border: 3px solid #4527a0;
+      background: rgba(126, 87, 194, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #4527a0;
+      transition: all 0.5s ease;
+    }
+
+    .square-label {
+      font-size: 13px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .squares-equals {
+      font-size: 28px;
+      font-weight: bold;
+      color: #4527a0;
+      margin-bottom: 30px;
+    }
+
+    .squares-plus {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4527a0;
+      margin-bottom: 30px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      margin-top: 40px;
+      color: #555;
+      font-size: 16px;
+    }
+
+    .footer i {
+      color: #e53935;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        width: 95%;
+      }
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+      .squares-visual { flex-wrap: wrap; }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="./index_eng_v.html">
+      <i class="ti ti-math"></i>
+      إحســـب بـذكـاء
+    </a>
+  </nav>
+
+  <div class="hero">
+    <h1>نظرية فيثاغورس</h1>
+    <p>في مثلث قائم الزاوية، مربع وتر يساوي مجموع مربعي الضلعين الآخرين. اكتشف كيفية تطبيق هذه النظرية العظيمة بخطوات مفصلة.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- حساب الوتر -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-triangle"></i></div>
+        <div class="calc-title">حساب الوتر</div>
+      </div>
+      <div class="calc-desc">
+        الوتر هو الضلع الأطول في المثلث القائم، وهو الضلع المقابل للزاوية القائمة. نحسبه بأخذ الجذر التربيعي لمجموع مربعي الضلعين.
+      </div>
+      <div class="formula-box">
+        وَ² = س² + ص² &nbsp;&nbsp; ← &nbsp;&nbsp; وَ = √(س² + ص²)
+        <div class="formula-sub">س = الضلع الأول &nbsp;&nbsp; ص = الضلع الثاني &nbsp;&nbsp; وَ = الوتر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>الضلع الأول (س)</label>
+          <input type="number" id="hypA" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الضلع الثاني (ص)</label>
+          <input type="number" id="hypB" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcHypotenuse()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الوتر
+      </button>
+      <div class="result-box" id="hypResultBox">
+        <div class="final-result" id="hypResult"></div>
+        <div class="triangle-visual" id="hypTriangle"></div>
+        <div class="squares-visual" id="hypSquares"></div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="hypSteps"></ul>
+      </div>
+    </div>
+
+    <!-- حساب أحد الضلعين -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-ruler"></i></div>
+        <div class="calc-title">حساب أحد الضلعين</div>
+      </div>
+      <div class="calc-desc">
+        إذا عرفنا الوتر و أحد الضلعين، نستطيع إيجاد الضلع الثاني بإعادة ترتيب نظرية فيثاغورس.
+      </div>
+      <div class="formula-box">
+        س² = وَ² - ص² &nbsp;&nbsp; ← &nbsp;&nbsp; س = √(وَ² - ص²)
+        <div class="formula-sub">وَ = الوتر &nbsp;&nbsp; ص = الضلع المعروف &nbsp;&nbsp; س = الضلع المجهول</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>الوتر (وَ)</label>
+          <input type="number" id="legC" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الضلع المعروف (ص)</label>
+          <input type="number" id="legB" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcLeg()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الضلع المجهول
+      </button>
+      <div class="result-box" id="legResultBox">
+        <div class="final-result" id="legResult"></div>
+        <div class="triangle-visual" id="legTriangle"></div>
+        <div class="squares-visual" id="legSquares"></div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="legSteps"></ul>
+      </div>
+    </div>
+
+    <!-- التحقق من مثلث قائم -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-check"></i></div>
+        <div class="calc-title">التحقق من مثلث قائم</div>
+      </div>
+      <div class="calc-desc">
+        تحقق مما إذا كان ثلاثة أطوال يمكن أن تشكل مثلثاً قائم الزاوية باستخدام نظرية فيثاغورس.
+      </div>
+      <div class="formula-box">
+        إذا كان أ² + ب² = ج² ← فالمثلث قائم الزاوية
+        <div class="formula-sub">أدخل أطوال الأضلاع الثلاثة</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>الضلع الأول</label>
+          <input type="number" id="checkA" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الضلع الثاني</label>
+          <input type="number" id="checkB" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الضلع الثالث (الأطول)</label>
+          <input type="number" id="checkC" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="checkRightTriangle()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> تحقق
+      </button>
+      <div class="result-box" id="checkResultBox">
+        <div class="final-result" id="checkResult"></div>
+        <div class="triangle-visual" id="checkTriangle"></div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="checkSteps"></ul>
+      </div>
+    </div>
+
+    <!-- المسافة بين نقطتين -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-map-pin"></i></div>
+        <div class="calc-title">المسافة بين نقطتين</div>
+      </div>
+      <div class="calc-desc">
+        نستخدم نظرية فيثاغورس لحساب المسافة بين نقطتين في المستوى الإحداثي. المسافة هي طول الوتر لمثلث قائم الزاوية.
+      </div>
+      <div class="formula-box">
+        د = √((س₂ - س₁)² + (ص₂ - ص₁)²)
+        <div class="formula-sub">(س₁، ص₁) = النقطة الأولى &nbsp;&nbsp; (س₂، ص₂) = النقطة الثانية</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>س₁</label>
+          <input type="number" id="distX1" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>ص₁</label>
+          <input type="number" id="distY1" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>س₂</label>
+          <input type="number" id="distX2" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>ص₂</label>
+          <input type="number" id="distY2" placeholder="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcDistance()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب المسافة
+      </button>
+      <div class="result-box" id="distResultBox">
+        <div class="final-result" id="distResult"></div>
+        <div class="triangle-visual" id="distTriangle"></div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="distSteps"></ul>
+      </div>
+    </div>
+
+    <!-- الأعداد الثلاثية فيثاغورية -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-list-numbers"></i></div>
+        <div class="calc-title">الأعداد الثلاثية فيثاغورية</div>
+      </div>
+      <div class="calc-desc">
+        الأعداد الثلاثية فيثاغورية هي ثلاثة أعداد صحيحة موجبة (أ، ب، ج) حيث أ² + ب² = ج². أشهرها (٣، ٤، ٥).
+      </div>
+      <div class="formula-box">
+        أ² + ب² = ج² &nbsp;&nbsp; حيث أ، ب، ج أعداد صحيحة
+        <div class="formula-sub">أدخل رقمين لإنشاء ثلاثية فيثاغورية</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>العدد الأول (م)</label>
+          <input type="number" id="tripM" placeholder="0" min="1" step="1">
+        </div>
+        <div class="input-group">
+          <label>العدد الثاني (ن)</label>
+          <input type="number" id="tripN" placeholder="0" min="1" step="1">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcTriple()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الثلاثية
+      </button>
+      <div class="result-box" id="tripResultBox">
+        <div class="final-result" id="tripResult"></div>
+        <div class="triangle-visual" id="tripTriangle"></div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="tripSteps"></ul>
+      </div>
+    </div>
+
+    <!-- حساب الزاوية -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-angle"></i></div>
+        <div class="calc-title">حساب زاوية المثلث القائم</div>
+      </div>
+      <div class="calc-desc">
+        نستخدم الدوال المثلثية (sin, cos, tan) لحساب زاوية في مثلث قائم الزاوية إذا عرفنا أضلاعه.
+      </div>
+      <div class="formula-box">
+        sin(θ) = الضلع المقابل / الوتر &nbsp;&nbsp; θ = arcsin(الضلع المقابل / الوتر)
+        <div class="formula-sub">أدخل الضلع المقابل والوتر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>الضلع المقابل للزاوية</label>
+          <input type="number" id="angleOpp" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الوتر</label>
+          <input type="number" id="angleHyp" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcAngle()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الزاوية
+      </button>
+      <div class="result-box" id="angleResultBox">
+        <div class="final-result" id="angleResult"></div>
+        <div class="triangle-visual" id="angleTriangle"></div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="angleSteps"></ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <i class="ti ti-heart"></i> صُمم بعناية لمساعدتك في فهم الرياضيات
+  </div>
+
+<script>
+
+function showResult(boxId, resultId, stepsId, resultText, steps) {
+  const box = document.getElementById(boxId);
+  const result = document.getElementById(resultId);
+  const stepsList = document.getElementById(stepsId);
+
+  result.innerHTML = resultText;
+  stepsList.innerHTML = '';
+
+  steps.forEach((step, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="step-num">' + (index + 1) + '</span>' + step;
+    stepsList.appendChild(li);
+  });
+
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function drawTriangle(containerId, a, b, c, labelA, labelB, labelC) {
+  const container = document.getElementById(containerId);
+  const maxSide = Math.max(a, b, c);
+  const scale = 140 / maxSide;
+  const w = a * scale;
+  const h = b * scale;
+
+  container.innerHTML = '<svg class="triangle-svg" viewBox="0 0 200 180">' +
+    '<polygon points="30,150 ' + (30+w) + ',150 30,' + (150-h) + '" class="triangle-fill" />' +
+    '<line x1="30" y1="150" x2="' + (30+w) + '" y2="150" class="triangle-side" />' +
+    '<line x1="' + (30+w) + '" y1="150" x2="30" y2="' + (150-h) + '" class="triangle-side" />' +
+    '<line x1="30" y1="150" x2="30" y2="' + (150-h) + '" class="triangle-side" />' +
+    '<polyline points="30,140 40,140 40,150" class="triangle-right-angle" />' +
+    '<text x="' + (15+w/2) + '" y="165" class="triangle-label" text-anchor="middle">' + (labelA || a) + '</text>' +
+    '<text x="' + (25+w/2) + '" y="' + (145-h/2) + '" class="triangle-label" text-anchor="middle">' + (labelC || c) + '</text>' +
+    '<text x="15" y="' + (145-h/2) + '" class="triangle-label" text-anchor="middle">' + (labelB || b) + '</text>' +
+    '<text x="' + (35+w/2) + '" y="' + (140-h/2) + '" class="triangle-label" style="font-size:12px;fill:#7e57c2;">90°</text>' +
+    '</svg>';
+}
+
+function drawSquares(containerId, a, b, c) {
+  const container = document.getElementById(containerId);
+  const maxArea = Math.max(a*a, b*b, c*c);
+  const scale = 80 / Math.sqrt(maxArea);
+  const sizeA = Math.max(a * scale, 20);
+  const sizeB = Math.max(b * scale, 20);
+  const sizeC = Math.max(c * scale, 20);
+
+  container.innerHTML = '<div class="square-box">' +
+    '<div class="square-shape" style="width:' + sizeA + 'px;height:' + sizeA + 'px;font-size:12px;">' + a + '²=' + (a*a) + '</div>' +
+    '<div class="square-label">مربع الضلع الأول</div>' +
+    '</div>' +
+    '<div class="squares-plus">+</div>' +
+    '<div class="square-box">' +
+    '<div class="square-shape" style="width:' + sizeB + 'px;height:' + sizeB + 'px;font-size:12px;">' + b + '²=' + (b*b) + '</div>' +
+    '<div class="square-label">مربع الضلع الثاني</div>' +
+    '</div>' +
+    '<div class="squares-equals">=</div>' +
+    '<div class="square-box">' +
+    '<div class="square-shape" style="width:' + sizeC + 'px;height:' + sizeC + 'px;font-size:12px;border-color:#e53935;background:rgba(229,57,53,0.2);color:#c62828;">' + c + '²=' + (c*c) + '</div>' +
+    '<div class="square-label">مربع الوتر</div>' +
+    '</div>';
+}
+
+function calcHypotenuse() {
+  let a = Number(document.getElementById("hypA").value);
+  let b = Number(document.getElementById("hypB").value);
+
+  if (a <= 0 || b <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  let a2 = a * a;
+  let b2 = b * b;
+  let sum = a2 + b2;
+  let c = Math.sqrt(sum);
+
+  let steps = [
+    'المعطيات: الضلع الأول = ' + a + '، الضلع الثاني = ' + b,
+    'نعوض في نظرية فيثاغورس: وَ² = س² + ص²',
+    'نحسب مربع الضلع الأول: ' + a + '² = ' + a2,
+    'نحسب مربع الضلع الثاني: ' + b + '² = ' + b2,
+    'نجمع المربعين: ' + a2 + ' + ' + b2 + ' = ' + sum,
+    'نأخذ الجذر التربيعي: ' + String.fromCharCode(8730) + sum + ' = ' + c.toFixed(4),
+    'الوتر = ' + c.toFixed(4)
+  ];
+
+  showResult('hypResultBox', 'hypResult', 'hypSteps', 
+    'الوتر = ' + c.toFixed(4), steps);
+
+  drawTriangle('hypTriangle', a, b, c.toFixed(2), 'س=' + a, 'ص=' + b, 'وَ=' + c.toFixed(2));
+  drawSquares('hypSquares', a, b, c.toFixed(2));
+}
+
+function calcLeg() {
+  let c = Number(document.getElementById("legC").value);
+  let b = Number(document.getElementById("legB").value);
+
+  if (c <= 0 || b <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  if (b >= c) {
+    alert("الوتر يجب أن يكون أكبر من الضلع المعروف");
+    return;
+  }
+
+  let c2 = c * c;
+  let b2 = b * b;
+  let diff = c2 - b2;
+  let a = Math.sqrt(diff);
+
+  let steps = [
+    'المعطيات: الوتر = ' + c + '، الضلع المعروف = ' + b,
+    'نعوض في القانون: س² = وَ² - ص²',
+    'نحسب مربع الوتر: ' + c + '² = ' + c2,
+    'نحسب مربع الضلع المعروف: ' + b + '² = ' + b2,
+    'نطرح: ' + c2 + ' - ' + b2 + ' = ' + diff,
+    'نأخذ الجذر التربيعي: ' + String.fromCharCode(8730) + diff + ' = ' + a.toFixed(4),
+    'الضلع المجهول = ' + a.toFixed(4)
+  ];
+
+  showResult('legResultBox', 'legResult', 'legSteps', 
+    'الضلع المجهول = ' + a.toFixed(4), steps);
+
+  drawTriangle('legTriangle', a.toFixed(2), b, c, 'س=' + a.toFixed(2), 'ص=' + b, 'وَ=' + c);
+  drawSquares('legSquares', a.toFixed(2), b, c);
+}
+
+function checkRightTriangle() {
+  let a = Number(document.getElementById("checkA").value);
+  let b = Number(document.getElementById("checkB").value);
+  let c = Number(document.getElementById("checkC").value);
+
+  if (a <= 0 || b <= 0 || c <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  let sides = [a, b, c].sort((x, y) => x - y);
+  let small1 = sides[0], small2 = sides[1], large = sides[2];
+
+  let sumSquares = small1*small1 + small2*small2;
+  let largeSquare = large*large;
+  let isRight = Math.abs(sumSquares - largeSquare) < 0.0001;
+
+  let steps = [
+    'المعطيات: الأضلاع = ' + a + '، ' + b + '، ' + c,
+    'نرتب الأضلاع: الأصغر = ' + small1 + '، ' + small2 + '، الأكبر (الوتر المحتمل) = ' + large,
+    'نحسب مربعي الأضلاع الأصغر: ' + small1 + '² + ' + small2 + '² = ' + (small1*small1) + ' + ' + (small2*small2) + ' = ' + sumSquares,
+    'نحسب مربع الضلع الأكبر: ' + large + '² = ' + largeSquare,
+    'نقارن: ' + sumSquares + (isRight ? ' = ' : ' ' + String.fromCharCode(8800) + ' ') + largeSquare
+  ];
+
+  let resultText = isRight 
+    ? 'نعم، هذا مثلث قائم الزاوية!' 
+    : 'لا، هذا ليس مثلثاً قائم الزاوية';
+
+  showResult('checkResultBox', 'checkResult', 'checkSteps', resultText, steps);
+
+  if (isRight) {
+    drawTriangle('checkTriangle', small1, small2, large, small1, small2, large);
+  } else {
+    document.getElementById('checkTriangle').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;font-size:16px;">ليس مثلثاً قائماً</div>';
+  }
+}
+
+function calcDistance() {
+  let x1 = Number(document.getElementById("distX1").value);
+  let y1 = Number(document.getElementById("distY1").value);
+  let x2 = Number(document.getElementById("distX2").value);
+  let y2 = Number(document.getElementById("distY2").value);
+
+  let dx = x2 - x1;
+  let dy = y2 - y1;
+  let dx2 = dx * dx;
+  let dy2 = dy * dy;
+  let sum = dx2 + dy2;
+  let dist = Math.sqrt(sum);
+
+  let steps = [
+    'المعطيات: النقطة الأولى (' + x1 + '، ' + y1 + ')، النقطة الثانية (' + x2 + '، ' + y2 + ')',
+    'نعوض في القانون: د = ' + String.fromCharCode(8730) + '((س₂ - س₁)² + (ص₂ - ص₁)²)',
+    'نحسب الفرق في السينات: س₂ - س₁ = ' + x2 + ' - ' + x1 + ' = ' + dx,
+    'نحسب الفرق في الصادات: ص₂ - ص₁ = ' + y2 + ' - ' + y1 + ' = ' + dy,
+    'نربع الفروق: (' + dx + ')² = ' + dx2 + '، (' + dy + ')² = ' + dy2,
+    'نجمع: ' + dx2 + ' + ' + dy2 + ' = ' + sum,
+    'نأخذ الجذر التربيعي: ' + String.fromCharCode(8730) + sum + ' = ' + dist.toFixed(4),
+    'المسافة = ' + dist.toFixed(4)
+  ];
+
+  showResult('distResultBox', 'distResult', 'distSteps', 
+    'المسافة = ' + dist.toFixed(4), steps);
+
+  let maxCoord = Math.max(Math.abs(x1), Math.abs(y1), Math.abs(x2), Math.abs(y2), 1);
+  let scale = 70 / maxCoord;
+  let cx1 = 100 + x1 * scale;
+  let cy1 = 100 - y1 * scale;
+  let cx2 = 100 + x2 * scale;
+  let cy2 = 100 - y2 * scale;
+
+  document.getElementById('distTriangle').innerHTML = 
+    '<svg class="triangle-svg" viewBox="0 0 200 200">' +
+    '<line x1="10" y1="100" x2="190" y2="100" stroke="#ccc" stroke-width="1" />' +
+    '<line x1="100" y1="10" x2="100" y2="190" stroke="#ccc" stroke-width="1" />' +
+    '<polygon points="' + cx1 + ',' + cy1 + ' ' + cx2 + ',' + cy1 + ' ' + cx2 + ',' + cy2 + '" fill="rgba(126,87,194,0.15)" stroke="#4527a0" stroke-width="2" />' +
+    '<circle cx="' + cx1 + '" cy="' + cy1 + '" r="4" fill="#4527a0" />' +
+    '<circle cx="' + cx2 + '" cy="' + cy2 + '" r="4" fill="#e53935" />' +
+    '<text x="' + (cx1-5) + '" y="' + (cy1-8) + '" font-size="10" fill="#4527a0" font-weight="bold">(' + x1 + ',' + y1 + ')</text>' +
+    '<text x="' + (cx2-5) + '" y="' + (cy2+15) + '" font-size="10" fill="#e53935" font-weight="bold">(' + x2 + ',' + y2 + ')</text>' +
+    '<text x="' + ((cx1+cx2)/2) + '" y="' + (cy1+12) + '" font-size="10" fill="#555">|' + dx + '|</text>' +
+    '<text x="' + (cx2+5) + '" y="' + ((cy1+cy2)/2) + '" font-size="10" fill="#555">|' + dy + '|</text>' +
+    '</svg>';
+}
+
+function calcTriple() {
+  let m = Number(document.getElementById("tripM").value);
+  let n = Number(document.getElementById("tripN").value);
+
+  if (m <= 0 || n <= 0 || m <= n) {
+    alert("الرجاء إدخال عددين صحيحين موجبين حيث م > ن");
+    return;
+  }
+
+  let a = m*m - n*n;
+  let b = 2*m*n;
+  let c = m*m + n*n;
+
+  let check = a*a + b*b;
+  let c2 = c*c;
+
+  let steps = [
+    'المعطيات: م = ' + m + '، ن = ' + n,
+    'نستخدم الصيغة: أ = م² - ن²، ب = 2×م×ن، ج = م² + ن²',
+    'نحسب أ = ' + m + '² - ' + n + '² = ' + (m*m) + ' - ' + (n*n) + ' = ' + a,
+    'نحسب ب = 2×' + m + '×' + n + ' = ' + b,
+    'نحسب ج = ' + m + '² + ' + n + '² = ' + (m*m) + ' + ' + (n*n) + ' = ' + c,
+    'نتحقق: ' + a + '² + ' + b + '² = ' + (a*a) + ' + ' + (b*b) + ' = ' + check,
+    'مربع الوتر: ' + c + '² = ' + c2,
+    'الثلاثية: (' + a + '، ' + b + '، ' + c + ')' + (check === c2 ? ' ' + String.fromCharCode(10003) : '')
+  ];
+
+  showResult('tripResultBox', 'tripResult', 'tripSteps', 
+    'الثلاثية فيثاغورية: (' + a + '، ' + b + '، ' + c + ')', steps);
+
+  drawTriangle('tripTriangle', a, b, c, a, b, c);
+}
+
+function calcAngle() {
+  let opp = Number(document.getElementById("angleOpp").value);
+  let hyp = Number(document.getElementById("angleHyp").value);
+
+  if (opp <= 0 || hyp <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  if (opp >= hyp) {
+    alert("الضلع المقابل يجب أن يكون أصغر من الوتر");
+    return;
+  }
+
+  let ratio = opp / hyp;
+  let angleRad = Math.asin(ratio);
+  let angleDeg = angleRad * (180 / Math.PI);
+  let angleMin = (angleDeg - Math.floor(angleDeg)) * 60;
+  let angleSec = (angleMin - Math.floor(angleMin)) * 60;
+
+  let steps = [
+    'المعطيات: الضلع المقابل = ' + opp + '، الوتر = ' + hyp,
+    'نعوض في القانون: sin(θ) = الضلع المقابل / الوتر',
+    'sin(θ) = ' + opp + ' / ' + hyp + ' = ' + ratio.toFixed(6),
+    'θ = arcsin(' + ratio.toFixed(6) + ')',
+    'θ = ' + angleDeg.toFixed(4) + '°',
+    `أو بالدقائق والثواني: ${Math.floor(angleDeg)}° ${Math.floor(angleMin)}' ${angleSec.toFixed(1)}"`
+  ];
+
+  showResult('angleResultBox', 'angleResult', 'angleSteps', 
+    'الزاوية = ' + angleDeg.toFixed(4) + '°', steps);
+
+  let adj = Math.sqrt(hyp*hyp - opp*opp);
+  document.getElementById('angleTriangle').innerHTML = 
+    '<svg class="triangle-svg" viewBox="0 0 200 180">' +
+    '<polygon points="30,150 170,150 30,40" fill="rgba(126,87,194,0.15)" />' +
+    '<line x1="30" y1="150" x2="170" y2="150" stroke="#4527a0" stroke-width="3" />' +
+    '<line x1="170" y1="150" x2="30" y2="40" stroke="#4527a0" stroke-width="3" />' +
+    '<line x1="30" y1="150" x2="30" y2="40" stroke="#4527a0" stroke-width="3" />' +
+    '<polyline points="30,140 40,140 40,150" fill="none" stroke="#e53935" stroke-width="2" />' +
+    '<text x="100" y="165" font-size="12" fill="#4527a0" text-anchor="middle" font-weight="bold">' + adj.toFixed(1) + '</text>' +
+    '<text x="110" y="90" font-size="12" fill="#4527a0" text-anchor="middle" font-weight="bold">' + hyp + '</text>' +
+    '<text x="15" y="95" font-size="12" fill="#e53935" text-anchor="middle" font-weight="bold">' + opp + '</text>' +
+    '<text x="55" y="130" font-size="14" fill="#e53935" font-weight="bold">θ=' + angleDeg.toFixed(1) + '°</text>' +
+    '</svg>';
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const active = document.activeElement;
+    if (active && active.tagName === 'INPUT') {
+      const card = active.closest('.calc-card');
+      if (card) {
+        const btn = card.querySelector('.calc-btn');
+        if (btn) btn.click();
+      }
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perimeter - Ihsb Bthka'a</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    input{
+      padding:10px;
+      margin:5px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      text-align:center;
+    }
+
+    button{
+      padding:10px 20px;
+      background:#228b22;
+      color:white;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      margin-top:10px;
+    }
+
+    button:hover{
+      opacity:.9;
+    }
+
+    body{
+      font-family:'Inter', 'Segoe UI', Roboto, sans-serif;
+      background:#f5f5f5;
+    }
+
+    nav{
+      background-color:#228b22;
+      padding:0 2rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      height:65px;
+      direction:ltr;
+      box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .nav-logo{
+      color:#fff;
+      font-size:22px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      font-family:"Inter", sans-serif;
+    }
+
+    .nav-logo i{
+      font-size:26px;
+    }
+
+    .container{
+      width:90%;
+      margin:40px auto;
+      background:white;
+      padding:25px;
+      border-radius:16px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      text-align:left;
+    }
+
+    h1{
+      font-family:"Inter", sans-serif;
+      margin-bottom:15px;
+    }
+
+    h3{
+      font-family:"Inter", sans-serif;
+      margin-bottom:15px;
+    }
+
+    p{
+      font-size:18px;
+      line-height:1.8;
+      color:black;
+      font-family: "Inter", sans-serif;
+    }
+
+    .rectangle,.square,.circle,.triangle,.trapezoid{
+      align-items:center;
+      text-align:center;
+      background-color:#FFFFF5;
+      border:2.5px solid black;
+      border-radius:5%;
+      padding:15px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="./index_eng_v.html">
+      <i class="ti ti-math"></i>
+      Ihsb Bthka'a
+    </a>
+  </nav>
+
+  <div class="container">
+
+    <h1>Perimeter</h1>
+    <p>
+      Perimeter is the length of the outer boundary of any geometric shape.
+      It is used for geometric shapes such as squares, rectangles, circles, and triangles.
+    </p>
+
+    <br><br>
+
+    <h1>Rectangle Perimeter / Parallelogram Perimeter</h1>
+    <p>The perimeter of a rectangle is the sum of its length and width multiplied by two, or length plus width.</p>
+
+    <div class="rectangle">
+
+        <h1>2(L + W)</h1>
+        <h1>L + L + W + W</h1>
+        <h3>L = Length <br> W = Width</h3>
+
+        <hr style="margin:15px 0">
+
+        <input type="number" id="rectLength" placeholder="Length">
+        <input type="number" id="rectWidth" placeholder="Width">
+
+        <button onclick="calcRectangle()">Calculate Perimeter</button>
+
+        <h3 id="rectResult"></h3>
+
+    </div>
+
+    <br><br>
+
+    <h1>Square Perimeter / Rhombus Perimeter</h1>
+    <p>The perimeter of a square is calculated by multiplying its side length by four or adding all four sides together.</p>
+
+    <div class="square">
+
+        <h1>4 × S</h1>
+        <h1>4S</h1>
+        <h1>S + S + S + S</h1>
+        <h3>S = Side</h3>
+
+        <hr style="margin:15px 0">
+
+        <input type="number" id="squareSide" placeholder="Side Length">
+
+        <button onclick="calcSquare()">Calculate Perimeter</button>
+
+        <h3 id="squareResult"></h3>
+
+    </div>
+
+    <h1>Circle Perimeter (Circumference)</h1>
+    <p>The circumference of a circle is calculated by multiplying the diameter by pi, or multiplying twice the radius by pi.</p>
+
+    <div class="circle">
+
+        <h1>D × π</h1>
+        <h1>2r × π</h1>
+
+        <h3>
+          π ≈ 3.14 <br>
+          r = radius <br>
+          D = diameter
+        </h3>
+
+        <hr style="margin:15px 0">
+
+        <input type="number" id="circleRadius" placeholder="Radius">
+
+        <button onclick="calcCircle()">Calculate Circumference</button>
+
+        <h3 id="circleResult"></h3>
+
+    </div>
+
+    <h1>Triangle Perimeter</h1>
+    <p>The perimeter of a triangle is calculated by adding all three sides together.</p>
+
+    <div class="triangle">
+
+        <h1>a + b + c</h1>
+
+        <h3>
+          a = First side <br>
+          b = Second side <br>
+          c = Third side
+        </h3>
+
+        <hr style="margin:15px 0">
+
+        <input type="number" id="sideA" placeholder="a">
+        <input type="number" id="sideB" placeholder="b">
+        <input type="number" id="sideC" placeholder="c">
+
+        <button onclick="calcTriangle()">Calculate Perimeter</button>
+
+        <h3 id="triangleResult"></h3>
+
+    </div>
+
+    <br><br>
+
+    <h1>Trapezoid Perimeter</h1>
+    <p>The perimeter of a trapezoid is calculated by adding all four sides together.</p>
+
+    <div class="trapezoid">
+
+        <h1>a + b + c + d</h1>
+
+        <h3>
+          a = Longer base <br>
+          b = Shorter base <br>
+          c = Right side <br>
+          d = Left side
+        </h3>
+
+        <hr style="margin:15px 0">
+
+        <input type="number" id="trapA" placeholder="a">
+        <input type="number" id="trapB" placeholder="b">
+        <input type="number" id="trapC" placeholder="c">
+        <input type="number" id="trapD" placeholder="d">
+
+        <button onclick="calcTrapezoid()">Calculate Perimeter</button>
+
+        <h3 id="trapezoidResult"></h3>
+
+    </div>
+
+  </div>
+
+<script>
+
+function calcRectangle(){
+  let length = Number(document.getElementById("rectLength").value);
+  let width = Number(document.getElementById("rectWidth").value);
+  document.getElementById("rectResult").innerHTML = "Perimeter = " + 2*(length+width);
+}
+
+function calcSquare(){
+  let side = Number(document.getElementById("squareSide").value);
+  document.getElementById("squareResult").innerHTML = "Perimeter = " + (4*side);
+}
+
+function calcCircle(){
+  let r = Number(document.getElementById("circleRadius").value);
+  document.getElementById("circleResult").innerHTML = "Circumference ≈ " + (2*Math.PI*r).toFixed(2);
+}
+
+function calcTriangle(){
+  let a = Number(document.getElementById("sideA").value);
+  let b = Number(document.getElementById("sideB").value);
+  let c = Number(document.getElementById("sideC").value);
+  document.getElementById("triangleResult").innerHTML = "Perimeter = " + (a+b+c);
+}
+
+function calcTrapezoid(){
+  let a = Number(document.getElementById("trapA").value);
+  let b = Number(document.getElementById("trapB").value);
+  let c = Number(document.getElementById("trapC").value);
+  let d = Number(document.getElementById("trapD").value);
+  document.getElementById("trapezoidResult").innerHTML = "Perimeter = " + (a+b+c+d);
+}
+
+</script>
+
+<!-- Language Redirect Script -->
+<script src="../assets/js/lang-redirect.js" defer></script>
+
+</body>
+</html>

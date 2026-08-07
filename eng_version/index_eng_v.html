@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NBTP8QHN');</script>
+<!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ihsb Bthka'a</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Scheherazade+New:wght@400;500;600;700&family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green:        #228b22;
+      --green-dark:   #1a6e1a;
+      --green-light:  #e8f5e9;
+      --green-pale:   #f4fbf4;
+      --green-glow:   rgba(34,139,34,0.15);
+      --radius-card:  20px;
+      --radius-btn:   14px;
+      --shadow-card:  0 8px 30px rgba(0,0,0,0.08);
+      --shadow-hover: 0 12px 40px rgba(34,139,34,0.12);
+    }
+
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background: linear-gradient(135deg, #f0f4f0 0%, #e8f5e9 50%, #f0f4f0 100%);
+      color: #222;
+      direction: rtl;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: linear-gradient(90deg, var(--green-dark), var(--green), var(--green-dark));
+      height: 70px;
+      padding: 0 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      color: #fff;
+      font-family: "Aref Ruqaa", serif;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-logo i { 
+      font-size: 28px; 
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── SHARED CARD ── */
+    .card {
+      background: #fff;
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-dark), var(--green), var(--green-light), var(--green), var(--green-dark));
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── MASCOT BANNER ── */
+    .mascot-banner {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      padding: 40px 40px;
+      border-right: 5px solid var(--green);
+      background: linear-gradient(135deg, #fff 0%, var(--green-pale) 100%);
+    }
+
+    .mascot-text { flex: 1; }
+
+    .mascot-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-family: "Marhey", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 24px;
+      margin-bottom: 14px;
+      letter-spacing: 0.03em;
+      border: 1px solid rgba(34,139,34,0.15);
+    }
+
+    .mascot-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--green-dark);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .mascot-body {
+      font-family: "Scheherazade New", serif;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 2;
+      color: #444;
+    }
+
+    /* Word definition block */
+    .word-definition {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, var(--green-pale), var(--green-light));
+      border-radius: 12px;
+      border-right: 4px solid var(--green);
+      flex-wrap: wrap;
+      box-shadow: 0 2px 10px rgba(34,139,34,0.05);
+    }
+
+    .word-badge {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .word-sep {
+      color: #bbb;
+      font-size: 18px;
+    }
+
+    .word-meaning {
+      font-family: "Scheherazade New", serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    /* Photo frame */
+    .mascot-photo {
+      flex-shrink: 0;
+      width: 170px;
+      height: 200px;
+      border-radius: 18px;
+      border: 3px dashed var(--green);
+      background: linear-gradient(145deg, var(--green-pale), var(--green-light));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--green);
+      overflow: hidden;
+      position: relative;
+      transition: box-shadow .3s, transform .3s;
+    }
+
+    .mascot-photo:hover {
+      box-shadow: 0 0 0 6px var(--green-glow);
+      transform: scale(1.02);
+    }
+
+    .mascot-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .mascot-photo:hover img {
+      transform: scale(1.05);
+    }
+
+    .mascot-photo-label {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 13px;
+      color: var(--green);
+      opacity: 0.7;
+      text-align: center;
+      line-height: 1.6;
+      padding: 0 10px;
+    }
+
+    /* corner accents */
+    .mascot-photo::before, .mascot-photo::after {
+      content: "";
+      position: absolute;
+      width: 24px; height: 24px;
+      border-color: var(--green);
+      border-style: solid;
+      opacity: .3;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .mascot-photo::before { top:10px; left:10px; border-width:3px 0 0 3px; border-radius:6px 0 0 0; }
+    .mascot-photo::after  { bottom:10px; right:10px; border-width:0 3px 3px 0; border-radius:0 0 6px 0; }
+
+    /* ── TOP ROW ── */
+    .top-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 24px;
+    }
+
+    /* Info card */
+    .info-card {
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-heading {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--green-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-heading::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 26px;
+      background: linear-gradient(180deg, var(--green), var(--green-light));
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .card-body {
+      font-family: "Scheherazade New", serif;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 2;
+      color: #444;
+    }
+
+    .donate-area {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 2px dashed #e0e0e0;
+    }
+
+    .donate-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .donate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #ff6b35, #f7931e);
+      color: #fff;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: "Marhey", sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+
+    .donate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    /* ── CALCULATOR ── */
+    .calculator-card {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #fff 0%, var(--green-pale) 100%);
+    }
+
+    .calc-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green);
+      text-align: center;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .calc-screen-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .calc-screen {
+      width: 100%;
+      height: 58px;
+      border: 2px solid #e0e0e0;
+      border-radius: 14px;
+      font-size: 24px;
+      padding: 12px 56px 12px 16px;
+      text-align: left;
+      direction: ltr;
+      background: linear-gradient(135deg, #f9f9f9, #fff);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      font-family: 'Tahoma', monospace;
+      color: #111;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .calc-screen:focus { 
+      border-color: var(--green); 
+      box-shadow: 0 0 0 4px var(--green-glow), inset 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* Backspace button inside screen */
+    .calc-backspace {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #999;
+      font-size: 22px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      line-height: 1;
+      transition: color .15s, background .15s;
+      display: flex;
+      align-items: center;
+    }
+
+    .calc-backspace:hover {
+      color: #b91c1c;
+      background: #fde8e8;
+    }
+
+    .calc-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    .calc-buttons button {
+      height: 50px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f2f2f2, #e8e8e8);
+      color: #111;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all .15s;
+      font-family: 'Tahoma', sans-serif;
+      align-self: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .calc-buttons button:hover  { 
+      background: linear-gradient(135deg, #e8e8e8, #ddd); 
+      transform: translateY(-2px); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .calc-buttons button:active { 
+      transform: translateY(0) scale(0.97); 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .btn-op {
+      background: linear-gradient(135deg, var(--green-light), #c8e6c9) !important;
+      color: var(--green-dark);
+    }
+    .btn-op:hover { 
+      background: linear-gradient(135deg, var(--green), var(--green-dark)) !important; 
+      color: #fff; 
+    }
+
+    .btn-clear {
+      background: linear-gradient(135deg, #fde8e8, #ffcdd2) !important;
+      color: #b91c1c;
+    }
+    .btn-clear:hover { 
+      background: linear-gradient(135deg, #fca5a5, #ef5350) !important; 
+      color: #7f1d1d; 
+    }
+
+    .btn-eq {
+      background: linear-gradient(135deg, var(--green), var(--green-dark)) !important;
+      color: #fff;
+      grid-column: span 4;
+      height: 52px;
+      font-size: 22px;
+      border-radius: 14px;
+      letter-spacing: 0.08em;
+      box-shadow: 0 4px 15px rgba(34,139,34,0.3);
+    }
+    .btn-eq:hover { 
+      background: linear-gradient(135deg, var(--green-dark), #1a5c1a) !important; 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34,139,34,0.4);
+    }
+
+    /* ── BOTTOM ROW ── */
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+    }
+
+    /* Sections */
+    .sections-card { padding: 32px 32px; }
+
+    .sections-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-family: "Marhey", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      margin-right: auto;
+      border: 2px solid var(--green);
+    }
+
+    .sections-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .sections-grid a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #f7f7f7, #fafafa);
+      border-radius: 14px;
+      text-decoration: none;
+      color: #222;
+      font-family: "Aref Ruqaa", serif;
+      font-size: 18px;
+      font-weight: 600;
+      border-right: 4px solid var(--green);
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sections-grid a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 0;
+      background: linear-gradient(90deg, var(--green-light), var(--green-pale));
+      transition: width 0.3s ease;
+      z-index: 0;
+    }
+
+    .sections-grid a:hover::before {
+      width: 100%;
+    }
+
+    .sections-grid a:hover {
+      color: var(--green-dark);
+      transform: translateX(-6px);
+      box-shadow: 0 4px 15px rgba(34,139,34,0.1);
+      border-right: 4px solid var(--green-dark);
+    }
+
+    .sections-grid a > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .sections-grid a i,
+    .sections-grid a svg {
+      color: var(--green);
+      font-size: 22px;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .sections-grid a:hover i,
+    .sections-grid a:hover svg {
+      transform: scale(1.1);
+    }
+
+    .section-arrow {
+      margin-right: auto;
+      color: #ccc !important;
+      font-size: 18px !important;
+      transition: color .15s, transform .15s;
+    }
+
+    .sections-grid a:hover .section-arrow {
+      color: var(--green) !important;
+      transform: translateX(-4px);
+    }
+
+    /* Kids card */
+    .kids-card {
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0;
+      background: linear-gradient(135deg, #fff 0%, var(--green-pale) 100%);
+    }
+
+    .kids-emoji {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .kids-emoji img {
+      transition: transform 0.3s ease;
+    }
+
+    .kids-emoji img:hover {
+      transform: scale(1.1) rotate(-5deg);
+    }
+
+    .kids-card-title {
+      font-family: "Marhey", sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    .kids-divider {
+      width: 50px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--green-light));
+      border-radius: 4px;
+      margin: 0 auto 24px;
+    }
+
+    .kids-card-desc {
+      font-family: "Marhey", sans-serif;
+      font-size: 17px;
+      color: #555;
+      line-height: 1.9;
+      max-width: 300px;
+      margin-bottom: 28px;
+    }
+
+    .kids-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #111, #333);
+      color: #fff;
+      border-radius: var(--radius-btn);
+      text-decoration: none;
+      font-family: "Marhey", sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      transition: all .3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    @keyframes rainbowShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .kids-btn:hover {
+      background: linear-gradient(-30deg,#ff0000,#ff7700,#ffff00,#00cc44,#0099ff,#6600ff,#ff00ff);
+      background-size: 500% 500%;
+      animation: rainbowShift 2s ease infinite;
+      color: #111;
+      text-shadow: 0 1px 4px rgba(0,0,0,.25);
+      box-shadow: 0 6px 25px rgba(0,0,0,.2);
+      transform: translateY(-2px);
+    }
+
+    /* ── FADE-IN ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .mascot-banner { animation: fadeUp .6s ease both; }
+    .top-row       { animation: fadeUp .6s .15s ease both; }
+    .bottom-row    { animation: fadeUp .6s .3s ease both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mascot-banner, .top-row, .bottom-row { animation: none; }
+    }
+
+    /* ── CALC RESULT FLASH ── */
+    @keyframes resultFlash {
+      0%   { background: var(--green-light); border-color: var(--green); }
+      100% { background: linear-gradient(135deg, #f9f9f9, #fff); border-color: #e0e0e0; }
+    }
+    .calc-screen.flash { animation: resultFlash .5s ease; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .top-row, .bottom-row {
+        grid-template-columns: 1fr;
+      }
+      .mascot-banner {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 24px;
+      }
+      .mascot-photo {
+        width: 100%;
+        height: 180px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav { padding: 0 1.2rem; }
+      .page { padding: 24px 14px 40px; }
+      .mascot-banner { padding: 24px 20px; }
+      .info-card, .sections-card { padding: 24px 20px; }
+      .mascot-title { font-size: 22px; }
+      .calc-buttons button { height: 46px; font-size: 16px; }
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-size: 14px;
+      font-family: "Marhey", sans-serif;
+    }
+
+    .site-footer i {
+      color: #e53935;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NBTP8QHN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+  <!-- NAV -->
+  <nav>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a class="nav-logo" href="#">
+        <i class="ti ti-math"></i>
+        إحسـب بـذكـاء
+      </a>
+      <ul style="list-style:none; display:flex; align-items:center; gap:10px; margin:0; padding:0;">
+        <a href="file:///H:/Horus/Horus/Horus/%D8%A5%D8%AD%D8%B3%D8%A8%20%D8%A8%D8%B0%D9%83%D8%A7%D8%A1/index.html"><li><img src="./Photos_Center/egypt.png" alt="Egypt" style="height:28px; vertical-align:middle;"></li></a>
+        <li style="color:#fff; font-size:20px; line-height:1;">/</li>
+        <a href="./eng_version/index_eng_v.html"><li><img src="./Photos_Center/usa.png" alt="USA" style="height:28px; vertical-align:middle;"></li></a>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- MASCOT BANNER -->
+    <div class="card mascot-banner">
+      <div class="mascot-text">
+        <span class="mascot-label">
+          <i class="ti ti-sparkles" style="font-size:14px;"></i>
+          Meet the Website's Mascot
+        </span>
+        <h1 class="mascot-title">Who is AL-Fateen EL-Hesabi?</h1>
+        <p class="mascot-body">
+          I'm AL-Fateen EL-Hesabi, your friend and mascot for Ihsb Bthka'a! I love math problems, and my goal is to make you love math and see it as easy and fun.
+          You'll find me in Ihsb Bthka'a!
+        </p>
+        <div class="word-definition">
+          <span class="word-badge">Genius</span>
+          <span class="word-sep">—</span>
+          <span class="word-meaning">A clever and intelligent person</span>
+        </div>
+      </div>
+      <div class="mascot-photo" id="mascotFrame">
+        <img
+          src="./Mascot/الفطين الحسابي.png"
+          alt=""
+          id="mascotImg"
+          onerror="this.style.display='none'; document.getElementById('mascotFallback').style.display='flex';"
+        >
+        <span class="mascot-photo-label" id="mascotFallback" style="display:none; flex-direction:column; align-items:center; gap:6px;">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" opacity=".5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          صورة Genius
+        </span>
+      </div>
+    </div>
+
+    <!-- TOP ROW -->
+    <div class="top-row">
+
+      <!-- Info card -->
+      <div class="card info-card">
+        <div>
+          <h2 class="card-heading">Who is Al-Fateen El-Heasabi</h2>
+          <p class="card-body">
+            Ihsb Bthka'a makes learning math easy by providing simple, step-by-step explanations for solving equations, calculating perimeter, area, volume, the Pythagorean Theorem, and many other mathematical concept          </p>
+        </div>
+      </div>
+
+      <!-- Calculator -->
+      <div class="card calculator-card">
+        <div class="calc-title">
+          <i class="ti ti-calculator"></i>
+          Calculator
+        </div>
+        <div class="calc-screen-wrap">
+          <input class="calc-screen" id="screen" readonly placeholder="0" aria-label="شاشة Calculator">
+          <button class="calc-backspace" onclick="backspace()" title="Delete last digit" aria-label="Delete last digit">
+            <i class="ti ti-backspace" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="calc-buttons">
+
+          <button onclick="appendValue('7')">7</button>
+          <button onclick="appendValue('8')">8</button>
+          <button onclick="appendValue('9')">9</button>
+          <button class="btn-op" onclick="appendValue('/')">÷</button>
+
+          <button onclick="appendValue('4')">4</button>
+          <button onclick="appendValue('5')">5</button>
+          <button onclick="appendValue('6')">6</button>
+          <button class="btn-op" onclick="appendValue('*')">×</button>
+
+          <button onclick="appendValue('1')">1</button>
+          <button onclick="appendValue('2')">2</button>
+          <button onclick="appendValue('3')">3</button>
+          <button class="btn-op" onclick="appendValue('-')">−</button>
+
+          <button onclick="appendValue('0')">0</button>
+          <button onclick="appendValue('.')">.</button>
+          <button class="btn-clear" onclick="clearScreen()">C</button>
+          <button class="btn-op" onclick="appendValue('+')">+</button>
+
+          <button class="btn-eq" onclick="calculate()">=</button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row">
+
+      <!-- Sections -->
+      <div class="card sections-card">
+        <h2 class="card-heading">
+          <i class="ti ti-layout-list" style="color:var(--green); font-size:24px;" aria-hidden="true"></i>
+          Sections
+          <span class="sections-count" aria-label="7 أقسام">7</span>
+        </h2>
+        <div class="sections-grid" role="list">
+
+          <a href="./‎perimeter.html" role="listitem">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="9.5" stroke="#228b22" stroke-width="1.5" stroke-dasharray="4 2"/>
+              <circle cx="11" cy="11" r="4.5" fill="#228b22"/>
+            </svg>
+            Perimeter
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+          <a href="./area.html" role="listitem">
+            <i class="ti ti-square" aria-hidden="true"></i>
+            Area
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+          <a href="./size.html" role="listitem">
+            <i class="ti ti-cube" aria-hidden="true"></i>
+            Volume
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+          <a href="./pythagoras.html" role="listitem">
+            <i class="ti ti-triangle" aria-hidden="true"></i>
+            Pythagorean Theorem
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+          <a href="./negative.html" role="listitem">
+            <i class="ti ti-minus" aria-hidden="true"></i>
+            Negative Numbers
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+          <a href="./fractions.html" role="listitem">
+            <i class="ti ti-divide" aria-hidden="true"></i>
+            Common Fractions
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+          <a href="./percentage.html" role="listitem">
+            <i class="ti ti-percentage" aria-hidden="true"></i>
+            Percentages
+            <i class="ti ti-chevron-left section-arrow" aria-hidden="true"></i>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Kids -->
+      <div class="card kids-card">
+        <div class="kids-emoji">
+          <img src="./Photos_Center/Boy.png" alt="" height="72">
+          <img src="./Photos_Center/Backpack.png" alt="" height="72">
+        </div>
+        <div class="kids-card-title">Ihsb Bthka'a Kids Version</div>
+        <div class="kids-divider"></div>
+        <p class="kids-card-desc">
+          A special version for kids that teaches math in the easiest and most enjoyable way possible!
+        </p>
+        <a class="kids-btn" href="./kids/explain_eng_v.html" target="_blank" rel="noopener">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i>
+          Go to Kids
+        </a>
+      </div>
+
+      <div>
+        
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="site-footer">
+    <i class="ti ti-heart"></i> Carefully designed to help you understand mathematics — Ihsb Bthka'a
+  </div>
+
+  <script>
+    const screen = document.getElementById("screen");
+
+    function appendValue(v) {
+      if (screen.value === "Error") screen.value = "";
+      screen.value += v;
+    }
+
+    function clearScreen() {
+      screen.value = "";
+    }
+
+    function backspace() {
+      screen.value = screen.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        if (!screen.value.trim()) return;
+        const result = eval(screen.value);
+        screen.value = parseFloat(result.toFixed(10)).toString();
+        screen.classList.remove("flash");
+        void screen.offsetWidth;
+        screen.classList.add("flash");
+        screen.addEventListener("animationend", () => screen.classList.remove("flash"), { once: true });
+      } catch {
+        screen.value = "Error";
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if ("0123456789.+-*/".includes(e.key)) appendValue(e.key);
+      else if (e.key === "Enter" || e.key === "=") calculate();
+      else if (e.key === "Backspace") backspace();
+      else if (e.key === "Escape" || e.key === "c" || e.key === "C") clearScreen();
+    });
+  </script>
+
+</body>
+</html>

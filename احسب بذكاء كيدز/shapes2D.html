@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأشكال ثنائية الأبعاد — إحسب بذكاء كيدز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+:root{
+  --primary:#06d6a0;
+  --secondary:#34d399;
+  --accent:#ffd93d;
+  --pink:#ff6b9d;
+  --orange:#ff6b35;
+  --purple:#a855f7;
+  --blue:#4ecdc4;
+}
+
+body{
+  font-family:"Marhey", sans-serif;
+  background:#f0fff9;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.bg-blobs{
+  position:fixed; inset:0;
+  pointer-events:none; z-index:0; overflow:hidden;
+}
+.blob{
+  position:absolute; border-radius:50%;
+  filter:blur(70px); opacity:.13;
+  animation:blobFloat 9s ease-in-out infinite;
+}
+.blob-1{ width:420px;height:420px;background:var(--primary);top:-120px;right:-100px;animation-delay:0s; }
+.blob-2{ width:360px;height:360px;background:var(--accent);bottom:-80px;left:-60px;animation-delay:-3s; }
+.blob-3{ width:260px;height:260px;background:var(--pink);top:45%;left:35%;animation-delay:-5s; }
+.blob-4{ width:200px;height:200px;background:var(--blue);bottom:25%;right:8%;animation-delay:-2s; }
+
+@keyframes blobFloat{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(18px,-18px) scale(1.05); }
+  66%{ transform:translate(-12px,12px) scale(.96); }
+}
+
+.top-progress{
+  position:fixed; top:0; left:0; right:0;
+  height:4px; z-index:999; background:rgba(6,214,160,.15);
+}
+.top-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  width:0%; transition:width .5s ease;
+}
+
+.topbar{
+  position:relative; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 28px;
+}
+.back-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  background:white; color:#555; border:none; border-radius:14px;
+  padding:10px 18px; font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 3px 14px rgba(0,0,0,.08); text-decoration:none;
+  transition:transform .2s, box-shadow .2s;
+}
+.back-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.12); }
+
+.lesson-badge{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; font-size:.82rem; font-weight:700;
+  padding:7px 18px; border-radius:20px;
+  box-shadow:0 4px 14px rgba(6,214,160,.35);
+}
+
+header{
+  position:relative; z-index:1;
+  text-align:center; padding:10px 20px 30px;
+}
+.header-emoji{
+  font-size:3.5rem; display:block; margin-bottom:12px;
+  animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+header h1{
+  font-size:clamp(2rem,5vw,3.2rem); font-weight:700; color:#1a1a2e;
+  animation:fadeDown .6s .1s ease both; margin-bottom:10px;
+}
+header p{
+  font-size:1.1rem; color:#888;
+  animation:fadeDown .6s .2s ease both;
+  max-width:460px; margin:0 auto; line-height:1.8;
+}
+
+.tabs-wrap{
+  position:relative; z-index:1;
+  display:flex; justify-content:center; gap:10px;
+  flex-wrap:wrap; padding:0 20px 28px;
+  animation:fadeUp .5s .3s ease both;
+}
+.tab-btn{
+  background:white; border:2px solid transparent;
+  border-radius:16px; padding:10px 20px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#bbb;
+  cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.tab-btn:hover{ transform:translateY(-3px); color:#888; }
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 20px rgba(6,214,160,.4);
+  transform:translateY(-3px);
+}
+
+.main{
+  position:relative; z-index:1;
+  max-width:960px; margin:0 auto;
+  padding:0 24px 80px;
+}
+.section{ display:none; }
+.section.active{ display:block; animation:fadeUp .45s ease both; }
+
+.section-title{
+  text-align:center; font-size:1.4rem; font-weight:700; color:#1a1a2e;
+  margin-bottom:28px;
+}
+.section-title span{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* ── SHAPES GALLERY ── */
+.shapes-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:18px; margin-bottom:30px;
+}
+
+.shape-card{
+  background:white; border-radius:24px;
+  padding:24px 16px 20px; text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.07);
+  cursor:pointer;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  position:relative; overflow:hidden;
+}
+.shape-card:hover{
+  transform:translateY(-10px) scale(1.04);
+  box-shadow:0 20px 45px rgba(0,0,0,.13);
+}
+.shape-card.active-card{
+  box-shadow:0 0 0 3px var(--primary), 0 20px 45px rgba(6,214,160,.25);
+}
+
+.shape-svg-wrap{
+  width:90px; height:90px;
+  margin:0 auto 14px;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+}
+.shape-card:hover .shape-svg-wrap{ transform:scale(1.15) rotate(5deg); }
+
+.shape-name-ar{ font-size:1.1rem; font-weight:700; color:#1a1a2e; margin-bottom:3px; }
+.shape-name-en{ font-size:.78rem; color:#bbb; }
+.shape-sides{
+  margin-top:8px; font-size:.8rem; font-weight:700;
+  padding:4px 10px; border-radius:10px; display:inline-block;
+}
+
+/* ── SHAPE DETAIL PANEL ── */
+.detail-panel{
+  background:white; border-radius:28px;
+  padding:34px 28px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  margin-bottom:24px;
+  display:none; animation:fadeUp .4s ease both;
+}
+.detail-panel.show{ display:block; }
+
+.detail-shape-wrap{
+  width:160px; height:160px;
+  margin:0 auto 20px;
+  display:flex; align-items:center; justify-content:center;
+  animation:bounceIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+.detail-name{ font-size:2rem; font-weight:700; color:#1a1a2e; margin-bottom:4px; }
+.detail-eng{ font-size:1rem; color:#bbb; margin-bottom:18px; }
+
+.detail-facts{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:12px;
+  margin-bottom:18px;
+}
+.fact-pill{
+  padding:8px 18px; border-radius:14px;
+  font-size:.9rem; font-weight:700;
+  background:#f5f5f5; color:#555;
+}
+
+.detail-desc{
+  font-size:1rem; color:#888; line-height:1.9;
+  max-width:420px; margin:0 auto 16px;
+}
+
+.real-world{
+  background:#f9f9f9; border-radius:18px;
+  padding:16px 20px; margin-top:10px;
+}
+.real-world-title{ font-size:.85rem; color:#bbb; font-weight:700; margin-bottom:8px; }
+.real-world-items{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.rw-item{ font-size:1.1rem; }
+
+/* ── QUIZ ── */
+.quiz-box{
+  background:white; border-radius:28px;
+  padding:36px 28px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--primary);
+}
+
+.quiz-shape-wrap{
+  width:160px; height:160px;
+  margin:0 auto 16px;
+  display:flex; align-items:center; justify-content:center;
+  animation:bounceIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+.quiz-question{ font-size:1.1rem; color:#666; margin-bottom:6px; }
+
+.quiz-choices{
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:14px; max-width:440px; margin:20px auto 10px;
+}
+.choice-btn{
+  background:#fafafa; border:2.5px solid #f0f0f0;
+  border-radius:18px; padding:15px 10px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; color:#555;
+  cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn:hover{
+  transform:translateY(-4px) scale(1.04);
+  border-color:#ddd; box-shadow:0 8px 22px rgba(0,0,0,.1);
+}
+.choice-btn.correct{
+  background:linear-gradient(135deg,#d4edda,#c3e6cb);
+  border-color:var(--green); color:#04a678;
+  animation:correctPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn.wrong{
+  background:linear-gradient(135deg,#fde8e8,#fcd5d5);
+  border-color:#ff4757; color:#ff4757;
+  animation:shake .4s ease;
+}
+
+.quiz-feedback{
+  font-size:1.4rem; font-weight:700; min-height:40px;
+  margin:10px 0; transition:all .3s;
+}
+.quiz-feedback.correct-fb{ color:var(--green); }
+.quiz-feedback.wrong-fb{ color:#ff4757; }
+
+.score-row{
+  display:flex; justify-content:center; gap:16px; margin:16px 0;
+}
+.score-pill{
+  background:#fafafa; border:1.5px solid #f0f0f0;
+  border-radius:14px; padding:10px 22px; text-align:center;
+}
+.score-pill .sp-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.score-pill .sp-label{ font-size:.8rem; color:#bbb; font-weight:600; }
+
+.next-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 34px; font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(6,214,160,.4);
+  transition:transform .2s; display:none;
+}
+.next-btn:hover{ transform:translateY(-3px); }
+
+/* ── MATCH GAME ── */
+.match-box{
+  background:white; border-radius:28px;
+  padding:32px 24px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--accent);
+}
+.match-instructions{
+  font-size:1rem; color:#888; margin-bottom:24px; line-height:1.8;
+}
+.match-cols{
+  display:flex; gap:20px; justify-content:center;
+  flex-wrap:wrap; margin-bottom:20px;
+}
+.match-col{ display:flex; flex-direction:column; gap:12px; flex:1; min-width:130px; max-width:180px; }
+.match-col-title{ font-size:.85rem; color:#bbb; font-weight:700; margin-bottom:4px; }
+
+.match-item{
+  background:#fafafa; border:2.5px solid #f0f0f0;
+  border-radius:16px; padding:14px 10px;
+  cursor:pointer; font-weight:700; color:#555;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  user-select:none;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.match-item:hover{ transform:scale(1.04); border-color:#ddd; box-shadow:0 6px 16px rgba(0,0,0,.1); }
+.match-item.selected{ border-color:var(--primary); background:linear-gradient(135deg,#e8fff7,#d4faf0); color:var(--primary); }
+.match-item.matched{ border-color:var(--green); background:linear-gradient(135deg,#d4edda,#c3e6cb); color:#04a678; pointer-events:none; }
+.match-item.wrong-match{ border-color:#ff4757; background:linear-gradient(135deg,#fde8e8,#fcd5d5); animation:shake .4s ease; }
+
+.match-score{
+  font-size:1.1rem; color:#888; font-weight:700; margin:10px 0;
+}
+.match-score span{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  font-size:1.4rem;
+}
+
+.restart-match-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:12px 28px; font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 18px rgba(6,214,160,.4);
+  transition:transform .2s; margin-top:10px;
+}
+.restart-match-btn:hover{ transform:translateY(-3px); }
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:fixed; width:10px; height:10px; border-radius:2px;
+  pointer-events:none; animation:confettiFall 1.2s ease-in forwards; z-index:9999;
+}
+@keyframes confettiFall{
+  0%{ opacity:1; transform:translateY(0) rotate(0deg); }
+  100%{ opacity:0; transform:translateY(200px) rotate(540deg); }
+}
+
+@keyframes fadeDown{ from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes popIn{ from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
+@keyframes bounceIn{ from{opacity:0;transform:scale(.5) rotate(-10deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes correctPop{ 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
+@keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+@keyframes spinIn{ from{opacity:0;transform:rotate(-180deg) scale(.3)} to{opacity:1;transform:rotate(0) scale(1)} }
+
+::-webkit-scrollbar{ width:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:#a0f5d8; border-radius:10px; }
+</style>
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill" id="topBar"></div></div>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div>
+  <div class="blob blob-3"></div><div class="blob blob-4"></div>
+</div>
+
+<div class="topbar">
+  <a href="./explain.html" class="back-btn">← العودة</a>
+  <div class="lesson-badge">🔷 الدرس ٥ — الأشكال ثنائية الأبعاد</div>
+</div>
+
+<header>
+  <span class="header-emoji">🔷</span>
+  <h1>الأشكال الهندسية ثنائية الأبعاد</h1>
+  <p>تعرّف على الأشكال المسطّحة التي لها طول وعرض فقط — بدون عمق!</p>
+</header>
+
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('gallery',this)">🎨 الأشكال</button>
+  <button class="tab-btn" onclick="switchTab('quiz',this)">🎯 اختبر نفسك</button>
+  <button class="tab-btn" onclick="switchTab('match',this)">🧩 لعبة المطابقة</button>
+</div>
+
+<main class="main">
+
+  <!-- ── GALLERY ── -->
+  <section class="section active" id="sec-gallery">
+    <div class="section-title">اضغط على أي شكل لتتعلّم عنه! <span>👆</span></div>
+
+    <div class="shapes-grid" id="shapesGrid"></div>
+
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-shape-wrap" id="detail-svg"></div>
+      <div class="detail-name" id="detail-name"></div>
+      <div class="detail-eng" id="detail-eng"></div>
+      <div class="detail-facts" id="detail-facts"></div>
+      <div class="detail-desc" id="detail-desc"></div>
+      <div class="real-world">
+        <div class="real-world-title">🌍 أمثلة من حياتنا</div>
+        <div class="real-world-items" id="detail-rw"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QUIZ ── -->
+  <section class="section" id="sec-quiz">
+    <div class="section-title">ما اسم هذا الشكل؟ <span>🤔</span></div>
+    <div class="quiz-box">
+      <div class="score-row">
+        <div class="score-pill"><div class="sp-num" id="q-correct">٠</div><div class="sp-label">✅ صحيح</div></div>
+        <div class="score-pill"><div class="sp-num" id="q-wrong">٠</div><div class="sp-label">❌ خطأ</div></div>
+        <div class="score-pill"><div class="sp-num" id="q-total">٠</div><div class="sp-label">📊 المجموع</div></div>
+      </div>
+      <div class="quiz-question">ما اسم هذا الشكل؟</div>
+      <div class="quiz-shape-wrap" id="q-shape"></div>
+      <div class="quiz-choices" id="q-choices"></div>
+      <div class="quiz-feedback" id="q-feedback"></div>
+      <button class="next-btn" id="q-next" onclick="nextQuiz()">السؤال التالي ←</button>
+    </div>
+  </section>
+
+  <!-- ── MATCH ── -->
+  <section class="section" id="sec-match">
+    <div class="section-title">طابق الشكل مع اسمه! <span>🧩</span></div>
+    <div class="match-box">
+      <div class="match-instructions">اضغط على شكل ثم اضغط على اسمه لمطابقتهما! 🎯</div>
+      <div class="match-score">تمّت المطابقة: <span id="m-score">٠</span> / <span id="m-total">٠</span></div>
+      <div class="match-cols">
+        <div class="match-col">
+          <div class="match-col-title">الأشكال 🔷</div>
+          <div id="match-shapes"></div>
+        </div>
+        <div class="match-col">
+          <div class="match-col-title">الأسماء 📝</div>
+          <div id="match-names"></div>
+        </div>
+      </div>
+      <button class="restart-match-btn" onclick="buildMatch()">🔄 لعبة جديدة</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+// ── SVG SHAPES ──
+function makeSVG(id, size=90, color='#06d6a0', stroke='none'){
+  const s = size, h = size, cx=s/2, cy=h/2;
+  const svgs = {
+    circle:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><circle cx="${cx}" cy="${cy}" r="${cx*.85}" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    square:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><rect x="${s*.1}" y="${h*.1}" width="${s*.8}" height="${h*.8}" rx="4" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    rectangle:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><rect x="${s*.05}" y="${h*.2}" width="${s*.9}" height="${h*.6}" rx="4" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    triangle:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><polygon points="${cx},${h*.1} ${s*.9},${h*.9} ${s*.1},${h*.9}" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    pentagon:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}">${pentagon(cx,cy,cx*.85,5,color,stroke)}</svg>`,
+
+    hexagon:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}">${polygon(cx,cy,cx*.85,6,color,stroke)}</svg>`,
+
+    heptagon:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}">${polygon(cx,cy,cx*.85,7,color,stroke)}</svg>`,
+
+    octagon:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}">${polygon(cx,cy,cx*.85,8,color,stroke)}</svg>`,
+
+    rhombus:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><polygon points="${cx},${h*.08} ${s*.9},${cy} ${cx},${h*.92} ${s*.1},${cy}" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    trapezoid:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><polygon points="${s*.2},${h*.2} ${s*.8},${h*.2} ${s*.95},${h*.8} ${s*.05},${h*.8}" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    star:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}">${star5(cx,cy,cx*.85,cx*.38,color,stroke)}</svg>`,
+
+    heart:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><path d="M${cx},${h*.82} C${cx},${h*.82} ${s*.1},${h*.55} ${s*.1},${h*.35} C${s*.1},${h*.18} ${s*.25},${h*.1} ${cx},${h*.3} C${s*.75},${h*.1} ${s*.9},${h*.18} ${s*.9},${h*.35} C${s*.9},${h*.55} ${cx},${h*.82} ${cx},${h*.82}Z" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    oval:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><ellipse cx="${cx}" cy="${cy}" rx="${cx*.88}" ry="${cy*.62}" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    parallelogram:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><polygon points="${s*.25},${h*.15} ${s*.95},${h*.15} ${s*.75},${h*.85} ${s*.05},${h*.85}" fill="${color}" stroke="${stroke}" stroke-width="2.5"/></svg>`,
+
+    cross:`<svg width="${s}" height="${h}" viewBox="0 0 ${s} ${h}"><rect x="${s*.35}" y="${h*.05}" width="${s*.3}" height="${h*.9}" rx="3" fill="${color}"/><rect x="${s*.05}" y="${h*.35}" width="${s*.9}" height="${h*.3}" rx="3" fill="${color}"/></svg>`,
+  };
+  return svgs[id] || svgs.circle;
+}
+
+function polygon(cx,cy,r,n,fill,stroke){
+  const pts=[];
+  for(let i=0;i<n;i++){
+    const a=(i/n)*Math.PI*2 - Math.PI/2;
+    pts.push(`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`);
+  }
+  return `<polygon points="${pts.join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>`;
+}
+function pentagon(cx,cy,r,n,fill,stroke){ return polygon(cx,cy,r,n,fill,stroke); }
+function star5(cx,cy,ro,ri,fill,stroke){
+  const pts=[];
+  for(let i=0;i<10;i++){
+    const a=(i/10)*Math.PI*2 - Math.PI/2;
+    const r=i%2===0?ro:ri;
+    pts.push(`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`);
+  }
+  return `<polygon points="${pts.join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>`;
+}
+
+// ── SHAPES DATA ──
+const shapes = [
+  { id:'circle',     nameAr:'الدائرة',       nameEn:'Circle',        color:'#ff6b9d', sides:0,  sidesLabel:'لا أضلاع',  desc:'الدائرة شكل مستدير تماماً — كل نقطة على حافتها تبعد نفس المسافة عن المركز!', facts:['لا زوايا','لا أضلاع','محيطها = ٢πر'], rw:['⚽ كرة','🌕 قمر','🍕 بيتزا','🎡 عجلة'] },
+  { id:'square',     nameAr:'المربع',         nameEn:'Square',        color:'#4ecdc4', sides:4,  sidesLabel:'٤ أضلاع متساوية', desc:'المربع له ٤ أضلاع متساوية وأربع زوايا قائمة — كل أضلاعه بنفس الطول!', facts:['٤ أضلاع متساوية','٤ زوايا قائمة','المحيط = ٤ × الضلع'], rw:['📦 صندوق','🎮 زر لعبة','🪟 نافذة','🎲 زهر'] },
+  { id:'rectangle',  nameAr:'المستطيل',       nameEn:'Rectangle',     color:'#a855f7', sides:4,  sidesLabel:'٤ أضلاع',       desc:'المستطيل له ضلعان طويلان وضلعان قصيران وأربع زوايا قائمة!', facts:['٤ أضلاع','٤ زوايا قائمة','ضلعان متساويان'], rw:['📱 هاتف','📺 شاشة','📖 كتاب','🚪 باب'] },
+  { id:'triangle',   nameAr:'المثلث',         nameEn:'Triangle',      color:'#ff6b35', sides:3,  sidesLabel:'٣ أضلاع',       desc:'المثلث هو أبسط الأشكال المغلقة — له ثلاثة أضلاع وثلاث زوايا!', facts:['٣ أضلاع','٣ زوايا','مجموع الزوايا ١٨٠°'], rw:['🍕 قطعة بيتزا','⛺ خيمة','🔺 إشارة تحذير','🎄 شجرة عيد'] },
+  { id:'pentagon',   nameAr:'المخمّس',        nameEn:'Pentagon',      color:'#06d6a0', sides:5,  sidesLabel:'٥ أضلاع',       desc:'المخمّس له خمسة أضلاع وخمس زوايا — مثل شكل بعض المنازل!', facts:['٥ أضلاع','٥ زوايا','مجموع الزوايا ٥٤٠°'], rw:['🏠 منزل (من الجانب)','⚽ قطعة من الكرة','🖐 شكل اليد'] },
+  { id:'hexagon',    nameAr:'المسدّس',        nameEn:'Hexagon',       color:'#ffd93d', sides:6,  sidesLabel:'٦ أضلاع',       desc:'المسدّس له ستة أضلاع متساوية — تصنع النحل خلاياها بهذا الشكل!', facts:['٦ أضلاع','٦ زوايا','مجموع الزوايا ٧٢٠°'], rw:['🍯 خلية نحل','❄️ ثلج','⬡ بلاط'] },
+  { id:'heptagon',   nameAr:'المسبّع',        nameEn:'Heptagon',      color:'#38bdf8', sides:7,  sidesLabel:'٧ أضلاع',       desc:'المسبّع له سبعة أضلاع وسبع زوايا — شكل نادر في الطبيعة!', facts:['٧ أضلاع','٧ زوايا','مجموع الزوايا ٩٠٠°'], rw:['🇬🇧 عملة معدنية بريطانية','🌸 بعض الزهور'] },
+  { id:'octagon',    nameAr:'المثمّن',        nameEn:'Octagon',       color:'#f59e0b', sides:8,  sidesLabel:'٨ أضلاع',       desc:'المثمّن له ثمانية أضلاع — الأكثر شهرة هو إشارة التوقف!', facts:['٨ أضلاع','٨ زوايا','مجموع الزوايا ١٠٨٠°'], rw:['🛑 إشارة توقف','⬡ بعض الألواح'] },
+  { id:'rhombus',    nameAr:'المعيّن',        nameEn:'Rhombus',       color:'#ec4899', sides:4,  sidesLabel:'٤ أضلاع متساوية', desc:'المعيّن مثل المربع لكنه مائل — كل أضلاعه متساوية ولكن زواياه مختلفة!', facts:['٤ أضلاع متساوية','٢ زاوية حادة','٢ زاوية منفرجة'], rw:['💎 ألماس','🃏 ورق اللعب','🪁 ورقة طائرة'] },
+  { id:'trapezoid',  nameAr:'شبه المنحرف',    nameEn:'Trapezoid',     color:'#8b5cf6', sides:4,  sidesLabel:'٤ أضلاع',       desc:'شبه المنحرف له ضلعان متوازيان أحدهما أطول من الآخر!', facts:['٤ أضلاع','ضلعان متوازيان','ضلعان غير متوازيين'], rw:['🪣 دلو','🏔 جبل (من الأمام)','🎪 خيمة سيرك'] },
+  { id:'star',       nameAr:'النجمة',         nameEn:'Star',          color:'#fbbf24', sides:5,  sidesLabel:'٥ رؤوس',        desc:'النجمة الخماسية لها خمسة رؤوس حادة تشبه ضوء النجوم في السماء!', facts:['٥ رؤوس حادة','١٠ أضلاع','رمز مشهور عالمياً'], rw:['⭐ نجوم السماء','🌟 شارة الشرطة','🎖 وسام'] },
+  { id:'heart',      nameAr:'القلب',          nameEn:'Heart',         color:'#ff4757', sides:0,  sidesLabel:'شكل منحنٍ',     desc:'شكل القلب رمز الحب والعاطفة — نصفاه متماثلان تماماً!', facts:['شكل متماثل','لا زوايا حادة','نصفان متساويان'], rw:['❤️ رمز الحب','🍓 فراولة','🫀 القلب الحقيقي'] },
+  { id:'oval',       nameAr:'البيضاوي',       nameEn:'Oval / Ellipse',color:'#10b981', sides:0,  sidesLabel:'لا أضلاع',     desc:'البيضاوي يشبه الدائرة لكنه ممدود من جهة — مثل شكل البيضة!', facts:['لا زوايا','لا أضلاع','محوران مختلفان'], rw:['🥚 بيضة','🏈 كرة أمريكية','🪐 مدار الكواكب'] },
+  { id:'parallelogram',nameAr:'متوازي الأضلاع',nameEn:'Parallelogram',color:'#6366f1', sides:4,  sidesLabel:'٤ أضلاع',      desc:'متوازي الأضلاع له ضلعان متوازيان من كل جهة — يشبه المستطيل المائل!', facts:['٤ أضلاع','ضلعان متوازيان','لا زوايا قائمة بالضرورة'], rw:['📐 شكل منحرف','🖼 إطار مائل','🔷 بلاط مائل'] },
+  { id:'cross',      nameAr:'الصليب',         nameEn:'Cross',         color:'#ef4444', sides:12, sidesLabel:'١٢ ضلعاً',      desc:'شكل الصليب يتكوّن من شريطين يتقاطعان في المنتصف — رمز شهير في الرياضة والطب!', facts:['١٢ ضلعاً','٤ فروع','متماثل من ٤ جهات'], rw:['➕ علامة الجمع','🏥 شعار الطب','🎯 نقطة التقاطع'] },
+];
+
+// ── GALLERY ──
+function buildGallery(){
+  const grid = document.getElementById('shapesGrid');
+  grid.innerHTML='';
+  shapes.forEach((s,i)=>{
+    const card = document.createElement('div');
+    card.className='shape-card';
+    card.style.animationDelay=(i*.05)+'s';
+    const sidesColor = s.color;
+    card.innerHTML=`
+      <div class="shape-svg-wrap">${makeSVG(s.id,90,s.color)}</div>
+      <div class="shape-name-ar">${s.nameAr}</div>
+      <div class="shape-name-en">${s.nameEn}</div>
+      <div class="shape-sides" style="background:${sidesColor}22;color:${sidesColor}">${s.sidesLabel}</div>
+    `;
+    card.onclick=()=>showDetail(s,card);
+    grid.appendChild(card);
+  });
+}
+
+let activeCard=null;
+function showDetail(s,card){
+  if(activeCard) activeCard.classList.remove('active-card');
+  card.classList.add('active-card');
+  activeCard=card;
+
+  const panel=document.getElementById('detailPanel');
+  document.getElementById('detail-svg').innerHTML=makeSVG(s.id,140,s.color);
+  document.getElementById('detail-name').textContent=s.nameAr;
+  document.getElementById('detail-eng').textContent=s.nameEn;
+  document.getElementById('detail-desc').textContent=s.desc;
+
+  const facts=document.getElementById('detail-facts');
+  facts.innerHTML=s.facts.map(f=>`<span class="fact-pill" style="background:${s.color}18;color:${s.color}">${f}</span>`).join('');
+
+  const rw=document.getElementById('detail-rw');
+  rw.innerHTML=s.rw.map(r=>`<span class="rw-item">${r}</span>`).join('');
+
+  panel.classList.add('show');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('topBar').style.width='50%';
+}
+
+buildGallery();
+
+// ── QUIZ ──
+let qCorrect=0,qWrong=0,qTotal=0,qAnswered=false;
+
+function nextQuiz(){
+  qAnswered=false;
+  document.getElementById('q-feedback').textContent='';
+  document.getElementById('q-feedback').className='quiz-feedback';
+  document.getElementById('q-next').style.display='none';
+
+  const current=shapes[Math.floor(Math.random()*shapes.length)];
+  document.getElementById('q-shape').innerHTML=makeSVG(current.id,140,current.color);
+
+  // wrong choices
+  const pool=shapes.filter(s=>s.id!==current.id);
+  const wrong=[];
+  while(wrong.length<3){
+    const r=pool[Math.floor(Math.random()*pool.length)];
+    if(!wrong.find(w=>w.id===r.id)) wrong.push(r);
+  }
+  const choices=[...wrong,current].sort(()=>Math.random()-.5);
+
+  const gc=document.getElementById('q-choices');
+  gc.innerHTML='';
+  choices.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=c.nameAr;
+    btn.onclick=()=>checkQuiz(btn,c.id===current.id,current.nameAr);
+    gc.appendChild(btn);
+  });
+}
+
+function checkQuiz(btn,isCorrect,correctName){
+  if(qAnswered) return;
+  qAnswered=true; qTotal++;
+  document.getElementById('q-total').textContent=toAr(qTotal);
+  if(isCorrect){
+    qCorrect++;
+    document.getElementById('q-correct').textContent=toAr(qCorrect);
+    btn.classList.add('correct');
+    document.getElementById('q-feedback').textContent='🎉 ممتاز! إجابة صحيحة!';
+    document.getElementById('q-feedback').className='quiz-feedback correct-fb';
+    launchConfettiCenter();
+  } else {
+    qWrong++;
+    document.getElementById('q-wrong').textContent=toAr(qWrong);
+    btn.classList.add('wrong');
+    document.getElementById('q-feedback').textContent=`❌ الإجابة الصحيحة: ${correctName}`;
+    document.getElementById('q-feedback').className='quiz-feedback wrong-fb';
+    document.querySelectorAll('#q-choices .choice-btn').forEach(b=>{
+      if(b.textContent===correctName) b.classList.add('correct');
+    });
+  }
+  document.getElementById('q-next').style.display='inline-block';
+}
+
+// ── MATCH GAME ──
+const matchColors=['#ff6b9d','#4ecdc4','#a855f7','#ff6b35','#06d6a0','#fbbf24'];
+let matchSelected=null, matchType=null, matchDone=0, matchTotal=0;
+
+function buildMatch(){
+  matchSelected=null; matchType=null; matchDone=0;
+  const pool=[...shapes].sort(()=>Math.random()-.5).slice(0,6);
+  matchTotal=pool.length;
+  document.getElementById('m-total').textContent=toAr(matchTotal);
+  document.getElementById('m-score').textContent='٠';
+
+  // shapes column
+  const sc=document.getElementById('match-shapes');
+  sc.innerHTML='';
+  const shuffledShapes=[...pool].sort(()=>Math.random()-.5);
+  shuffledShapes.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='match-item';
+    el.dataset.id=s.id;
+    el.dataset.kind='shape';
+    el.style.animationDelay=(i*.06)+'s';
+    el.innerHTML=`<span>${makeSVG(s.id,36,matchColors[i%matchColors.length])}</span>`;
+    el.onclick=()=>matchClick(el,'shape',s.id);
+    sc.appendChild(el);
+  });
+
+  // names column (shuffled separately)
+  const nc=document.getElementById('match-names');
+  nc.innerHTML='';
+  const shuffledNames=[...pool].sort(()=>Math.random()-.5);
+  shuffledNames.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='match-item';
+    el.dataset.id=s.id;
+    el.dataset.kind='name';
+    el.style.animationDelay=(i*.06+.03)+'s';
+    el.textContent=s.nameAr;
+    el.onclick=()=>matchClick(el,'name',s.id);
+    nc.appendChild(el);
+  });
+}
+
+function matchClick(el,kind,id){
+  if(el.classList.contains('matched')) return;
+
+  if(!matchSelected){
+    // first selection
+    el.classList.add('selected');
+    matchSelected=id;
+    matchType=kind;
+  } else {
+    if(matchType===kind){
+      // same column — switch selection
+      document.querySelectorAll('.match-item.selected').forEach(e=>e.classList.remove('selected'));
+      el.classList.add('selected');
+      matchSelected=id;
+      matchType=kind;
+      return;
+    }
+    // second selection — check
+    if(matchSelected===id){
+      // correct match
+      document.querySelectorAll('.match-item.selected').forEach(e=>{
+        e.classList.remove('selected');
+        e.classList.add('matched');
+      });
+      el.classList.add('matched');
+      matchDone++;
+      document.getElementById('m-score').textContent=toAr(matchDone);
+      launchConfettiCenter();
+      if(matchDone===matchTotal){
+        setTimeout(()=>{
+          document.getElementById('m-score').textContent='🎉 '+toAr(matchDone);
+        },400);
+      }
+    } else {
+      // wrong
+      el.classList.add('wrong-match');
+      document.querySelectorAll('.match-item.selected').forEach(e=>{
+        e.classList.remove('selected');
+        e.classList.add('wrong-match');
+      });
+      setTimeout(()=>{
+        document.querySelectorAll('.match-item.wrong-match').forEach(e=>e.classList.remove('wrong-match'));
+        el.classList.remove('wrong-match');
+      },600);
+    }
+    matchSelected=null; matchType=null;
+  }
+}
+
+// ── TABS ──
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='quiz') nextQuiz();
+  if(id==='match') buildMatch();
+}
+
+// ── CONFETTI ──
+function launchConfettiCenter(){
+  const colors=['#06d6a0','#ffd93d','#ff6b9d','#4ecdc4','#ff6b35','#a855f7'];
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${30+Math.random()*40}%;top:${window.scrollY+80}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*.2}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+
+document.getElementById('topBar').style.width='10%';
+</script>
+</body>
+</html>

@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الطرح — إحسب بذكاء كيدز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+:root{
+  --primary:#ff6b9d;
+  --secondary:#f472b6;
+  --accent:#ffd93d;
+  --blue:#4ecdc4;
+  --orange:#ff6b35;
+  --green:#06d6a0;
+  --purple:#a855f7;
+}
+
+body{
+  font-family:"Marhey", sans-serif;
+  background:#fff0f6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.bg-blobs{
+  position:fixed; inset:0;
+  pointer-events:none; z-index:0; overflow:hidden;
+}
+.blob{
+  position:absolute; border-radius:50%;
+  filter:blur(70px); opacity:.13;
+  animation:blobFloat 9s ease-in-out infinite;
+}
+.blob-1{ width:420px;height:420px;background:var(--primary);top:-120px;right:-100px;animation-delay:0s; }
+.blob-2{ width:360px;height:360px;background:var(--accent);bottom:-80px;left:-60px;animation-delay:-3s; }
+.blob-3{ width:260px;height:260px;background:var(--blue);top:45%;left:35%;animation-delay:-5s; }
+.blob-4{ width:200px;height:200px;background:var(--purple);bottom:25%;right:8%;animation-delay:-2s; }
+
+@keyframes blobFloat{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(18px,-18px) scale(1.05); }
+  66%{ transform:translate(-12px,12px) scale(.96); }
+}
+
+.top-progress{
+  position:fixed; top:0; left:0; right:0;
+  height:4px; z-index:999;
+  background:rgba(255,107,157,.15);
+}
+.top-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  width:0%; transition:width .5s ease;
+}
+
+.topbar{
+  position:relative; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 28px;
+}
+.back-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  background:white; color:#555; border:none; border-radius:14px;
+  padding:10px 18px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 3px 14px rgba(0,0,0,.08);
+  text-decoration:none;
+  transition:transform .2s, box-shadow .2s;
+}
+.back-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.12); }
+
+.lesson-badge{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; font-size:.82rem; font-weight:700;
+  padding:7px 18px; border-radius:20px;
+  box-shadow:0 4px 14px rgba(255,107,157,.35);
+}
+
+header{
+  position:relative; z-index:1;
+  text-align:center; padding:10px 20px 30px;
+}
+.header-emoji{
+  font-size:3.5rem; display:block; margin-bottom:12px;
+  animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+header h1{
+  font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:700; color:#1a1a2e;
+  animation:fadeDown .6s .1s ease both; margin-bottom:10px;
+}
+header p{
+  font-size:1.1rem; color:#888;
+  animation:fadeDown .6s .2s ease both;
+  max-width:420px; margin:0 auto; line-height:1.8;
+}
+
+.tabs-wrap{
+  position:relative; z-index:1;
+  display:flex; justify-content:center; gap:10px;
+  flex-wrap:wrap; padding:0 20px 28px;
+  animation:fadeUp .5s .3s ease both;
+}
+.tab-btn{
+  background:white; border:2px solid transparent;
+  border-radius:16px; padding:10px 22px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#bbb;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.tab-btn:hover{ transform:translateY(-3px); color:#888; }
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 20px rgba(255,107,157,.4);
+  transform:translateY(-3px);
+}
+
+.main{
+  position:relative; z-index:1;
+  max-width:900px; margin:0 auto;
+  padding:0 24px 80px;
+}
+.section{ display:none; }
+.section.active{ display:block; animation:fadeUp .45s ease both; }
+
+.section-title{
+  text-align:center;
+  font-size:1.4rem; font-weight:700; color:#1a1a2e;
+  margin-bottom:28px;
+}
+.section-title span{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* ── LEARN ── */
+.learn-box{
+  background:white; border-radius:28px;
+  padding:36px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  margin-bottom:24px;
+  border-top:5px solid var(--primary);
+}
+
+.equation-display{
+  display:flex; align-items:center; justify-content:center;
+  gap:20px; flex-wrap:wrap; margin:24px 0;
+}
+.eq-num{
+  font-size:clamp(3rem,10vw,5.5rem);
+  font-weight:700; line-height:1;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:bounceIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  min-width:80px;
+}
+.eq-op{
+  font-size:clamp(2.5rem,8vw,4.5rem);
+  font-weight:700; color:var(--accent);
+  line-height:1; flex-shrink:0;
+  filter:drop-shadow(0 2px 6px rgba(255,217,61,.5));
+}
+.eq-result{
+  font-size:clamp(3rem,10vw,5.5rem);
+  font-weight:700; line-height:1;
+  background:linear-gradient(135deg,var(--orange),var(--blue));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  min-width:80px;
+}
+.eq-equals{
+  font-size:clamp(2.5rem,8vw,4.5rem);
+  font-weight:700; color:#bbb; line-height:1; flex-shrink:0;
+}
+
+/* visual: crossed-out blocks */
+.visual-blocks{
+  display:flex; align-items:center; justify-content:center;
+  gap:16px; flex-wrap:wrap; margin:20px 0;
+}
+.block-row{
+  display:flex; flex-wrap:wrap;
+  gap:6px; justify-content:center;
+  max-width:240px;
+}
+.block{
+  width:28px; height:28px; border-radius:8px;
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 3px 8px rgba(0,0,0,.15);
+  position:relative; transition:all .4s;
+}
+.block.kept{ background:linear-gradient(135deg,var(--primary),var(--secondary)); }
+.block.removed{
+  background:#ddd;
+  transform:scale(.7);
+  box-shadow:none;
+}
+.block.removed::after{
+  content:'✕';
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.7rem; color:#aaa; font-weight:900;
+}
+
+.minus-visual{
+  font-size:2rem; color:var(--accent); font-weight:800;
+  filter:drop-shadow(0 2px 4px rgba(255,217,61,.4));
+}
+.arrow-visual{ font-size:1.8rem; color:#ccc; }
+
+.learn-name{
+  font-size:1.3rem; color:#1a1a2e; font-weight:700; margin-bottom:6px;
+}
+.learn-desc{
+  font-size:1rem; color:#999; line-height:1.8;
+}
+
+.learn-nav{
+  display:flex; justify-content:center; gap:14px; margin-top:28px;
+}
+.nav-btn{
+  background:white; border:2px solid #f0f0f0;
+  border-radius:14px; padding:12px 24px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#888;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-btn:hover{
+  transform:translateY(-3px) scale(1.04);
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 8px 20px rgba(255,107,157,.4);
+}
+.nav-btn.primary-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 18px rgba(255,107,157,.4);
+}
+
+/* ── PRACTICE ── */
+.practice-card{
+  background:white; border-radius:28px;
+  padding:38px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--primary);
+}
+.prac-eq{
+  display:flex; align-items:center; justify-content:center;
+  gap:18px; flex-wrap:wrap; margin:20px 0 30px;
+}
+.prac-num{
+  font-size:clamp(3.5rem,12vw,6rem);
+  font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.prac-op{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:var(--accent);
+  filter:drop-shadow(0 2px 6px rgba(255,217,61,.4));
+}
+.prac-eq-text{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:#ddd;
+}
+.prac-box{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:#ddd;
+  border-bottom:4px solid var(--primary);
+  min-width:80px; display:inline-block;
+  padding:0 10px;
+}
+
+.choices-grid{
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:14px; max-width:420px; margin:0 auto 20px;
+}
+.choice-btn{
+  background:#fafafa; border:2.5px solid #f0f0f0;
+  border-radius:18px; padding:18px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.6rem; font-weight:700; color:#555;
+  cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn:hover{
+  transform:translateY(-4px) scale(1.05);
+  border-color:#ddd; box-shadow:0 8px 22px rgba(0,0,0,.1);
+}
+.choice-btn.correct{
+  background:linear-gradient(135deg,#d4edda,#c3e6cb);
+  border-color:var(--green); color:#04a678;
+  animation:correctPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn.wrong{
+  background:linear-gradient(135deg,#fde8e8,#fcd5d5);
+  border-color:#ff4757; color:#ff4757;
+  animation:shake .4s ease;
+}
+
+.prac-feedback{
+  font-size:1.5rem; font-weight:700; min-height:40px;
+  margin:10px 0; transition:all .3s;
+}
+.prac-feedback.correct-fb{ color:var(--green); }
+.prac-feedback.wrong-fb{ color:#ff4757; }
+
+.score-row{
+  display:flex; justify-content:center; gap:16px; margin:20px 0;
+}
+.score-pill{
+  background:#fafafa; border:1.5px solid #f0f0f0;
+  border-radius:14px; padding:10px 22px; text-align:center;
+}
+.score-pill .sp-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.score-pill .sp-label{ font-size:.8rem; color:#bbb; font-weight:600; }
+
+.next-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 34px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(255,107,157,.4);
+  transition:transform .2s, box-shadow .2s;
+  display:none;
+}
+.next-btn:hover{ transform:translateY(-3px); box-shadow:0 10px 28px rgba(255,107,157,.5); }
+
+/* ── BALLOON GAME ── */
+.balloon-section{
+  text-align:center;
+}
+.balloon-intro{
+  background:white; border-radius:22px;
+  padding:24px; margin-bottom:20px;
+  box-shadow:0 4px 18px rgba(0,0,0,.07);
+  border-top:4px solid var(--primary);
+}
+.balloon-intro p{ font-size:1rem; color:#888; line-height:1.8; }
+
+.balloon-game-box{
+  background:white; border-radius:28px;
+  padding:30px 24px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--accent);
+  min-height:360px;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+}
+
+.balloon-question{
+  font-size:1.2rem; color:#666; font-weight:700; line-height:1.8;
+}
+
+.balloons-area{
+  display:flex; flex-wrap:wrap;
+  justify-content:center; gap:10px;
+  max-width:400px; min-height:100px;
+  align-items:center;
+}
+
+.balloon{
+  font-size:2.4rem; cursor:pointer;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  user-select:none;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));
+}
+.balloon:hover{ transform:scale(1.2) rotate(5deg); }
+.balloon.popped{
+  transform:scale(0) rotate(180deg);
+  opacity:0;
+  pointer-events:none;
+}
+
+.balloon-eq{
+  font-size:2rem; font-weight:700; color:#1a1a2e;
+}
+.balloon-eq .b-gone{ color:var(--primary); }
+.balloon-eq .b-left{ color:var(--orange); }
+
+.balloon-feedback{
+  font-size:1.4rem; font-weight:700; min-height:36px;
+}
+.balloon-feedback.correct-fb{ color:var(--green); }
+.balloon-feedback.wrong-fb{ color:#ff4757; }
+
+.balloon-score-row{
+  display:flex; gap:14px; justify-content:center; margin-top:4px;
+}
+
+.start-balloon-btn, .next-balloon-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 32px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(255,107,157,.4);
+  transition:transform .2s;
+}
+.start-balloon-btn:hover, .next-balloon-btn:hover{ transform:translateY(-3px); }
+
+/* ── SPEED ── */
+.speed-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; flex-wrap:wrap; gap:10px;
+}
+.timer-box{
+  background:white; border-radius:16px;
+  padding:12px 22px; text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  border-top:3px solid var(--primary);
+}
+.timer-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.timer-label{ font-size:.75rem; color:#bbb; font-weight:600; }
+.timer-num.danger{
+  background:linear-gradient(135deg,#ff4757,var(--primary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:pulse .5s ease-in-out infinite;
+}
+
+.speed-card{
+  background:white; border-radius:28px;
+  padding:36px 28px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--accent);
+}
+.speed-eq{
+  font-size:clamp(2.5rem,10vw,5rem);
+  font-weight:700; margin:20px 0;
+  color:#1a1a2e; letter-spacing:.05em;
+}
+.speed-eq .s-op{ color:var(--accent); }
+
+.speed-input{
+  font-size:2.5rem; font-weight:700;
+  text-align:center; color:#1a1a2e;
+  border:3px solid #f0f0f0; border-radius:18px;
+  padding:14px 20px; width:180px;
+  font-family:"Marhey", sans-serif;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  margin:16px auto; display:block;
+}
+.speed-input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px rgba(255,107,157,.2);
+}
+.speed-input.correct-input{
+  border-color:var(--green); background:#f0fff9;
+  animation:correctPop .3s ease;
+}
+.speed-input.wrong-input{
+  border-color:#ff4757; background:#fff5f5;
+  animation:shake .3s ease;
+}
+
+.speed-submit{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 36px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(255,107,157,.4);
+  transition:transform .2s;
+}
+.speed-submit:hover{ transform:translateY(-3px); }
+
+.progress-bar-bg{
+  background:#f0f0f0; border-radius:10px;
+  height:10px; overflow:hidden; margin:16px 0;
+}
+.progress-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  border-radius:10px; transition:width .4s ease;
+}
+
+.result-screen{
+  background:white; border-radius:28px;
+  padding:50px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  display:none; animation:fadeUp .5s ease both;
+}
+.result-screen.show{ display:block; }
+.result-emoji{ font-size:4rem; margin-bottom:16px; animation:bounceIn .6s ease both; }
+.result-title{ font-size:2rem; font-weight:700; color:#1a1a2e; margin-bottom:8px; }
+.result-score{
+  font-size:3.5rem; font-weight:700; margin:20px 0;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.result-msg{ font-size:1.1rem; color:#888; margin-bottom:28px; line-height:1.8; }
+.restart-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 36px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(255,107,157,.4);
+  transition:transform .2s;
+}
+.restart-btn:hover{ transform:translateY(-3px); }
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:fixed; width:10px; height:10px;
+  border-radius:2px; pointer-events:none;
+  animation:confettiFall 1.2s ease-in forwards; z-index:9999;
+}
+@keyframes confettiFall{
+  0%{ opacity:1; transform:translateY(0) rotate(0deg); }
+  100%{ opacity:0; transform:translateY(200px) rotate(540deg); }
+}
+
+@keyframes fadeDown{
+  from{ opacity:0; transform:translateY(-16px); }
+  to{   opacity:1; transform:translateY(0); }
+}
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(20px); }
+  to{   opacity:1; transform:translateY(0); }
+}
+@keyframes popIn{
+  from{ opacity:0; transform:scale(.7); }
+  to{   opacity:1; transform:scale(1); }
+}
+@keyframes bounceIn{
+  from{ opacity:0; transform:scale(.5) rotate(-10deg); }
+  to{   opacity:1; transform:scale(1) rotate(0); }
+}
+@keyframes correctPop{
+  0%{ transform:scale(1); } 50%{ transform:scale(1.1); } 100%{ transform:scale(1); }
+}
+@keyframes shake{
+  0%,100%{ transform:translateX(0); }
+  25%{ transform:translateX(-8px); }
+  75%{ transform:translateX(8px); }
+}
+@keyframes pulse{
+  0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); }
+}
+
+::-webkit-scrollbar{ width:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:#ffd0e4; border-radius:10px; }
+</style>
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill" id="topBar"></div></div>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+
+<div class="topbar">
+  <a href="./explain.html" class="back-btn">← العودة</a>
+  <div class="lesson-badge">➖ الدرس ٣ — الطرح</div>
+</div>
+
+<header>
+  <span class="header-emoji">➖</span>
+  <h1>تعلّم الطرح</h1>
+  <p>تعلّم كيف تأخذ عدداً من عدد آخر بطريقة مسلية ومرئية!</p>
+</header>
+
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('learn', this)">📖 تعلّم</button>
+  <button class="tab-btn" onclick="switchTab('balloon', this)">🎈 لعبة البالونات</button>
+  <button class="tab-btn" onclick="switchTab('practice', this)">✏️ تدرّب</button>
+  <button class="tab-btn" onclick="switchTab('speed', this)">⚡ سباق السرعة</button>
+</div>
+
+<main class="main">
+
+  <!-- ── LEARN ── -->
+  <section class="section active" id="sec-learn">
+    <div class="section-title">كيف نطرح؟ <span>🤔</span></div>
+
+    <div class="learn-box">
+      <div class="learn-name" id="l-name">٥ − ٢ = ٣</div>
+      <div class="learn-desc" id="l-desc">لدينا ٥ تفاحات، أكلنا ٢ منها — تبقّت لنا ٣ تفاحات!</div>
+
+      <div class="equation-display">
+        <div class="eq-num" id="l-a">٥</div>
+        <div class="eq-op">−</div>
+        <div class="eq-num" id="l-b">٢</div>
+        <div class="eq-equals">=</div>
+        <div class="eq-result" id="l-res">٣</div>
+      </div>
+
+      <div class="visual-blocks" id="l-blocks"></div>
+      <div style="margin-top:16px;font-size:1.3rem;" id="l-emojis"></div>
+    </div>
+
+    <div class="learn-nav">
+      <button class="nav-btn" onclick="learnChange(-1)">→ السابق</button>
+      <div style="background:white;border-radius:14px;padding:10px 22px;font-size:1rem;font-weight:700;color:#1a1a2e;box-shadow:0 3px 12px rgba(0,0,0,.08);display:flex;align-items:center;">
+        <span id="l-counter">١ / ١٠</span>
+      </div>
+      <button class="nav-btn primary-btn" onclick="learnChange(1)">التالي ←</button>
+    </div>
+  </section>
+
+  <!-- ── BALLOON GAME ── -->
+  <section class="section" id="sec-balloon">
+    <div class="section-title">لعبة البالونات! <span>🎈</span></div>
+
+    <div class="balloon-intro">
+      <p>🎈 انظر إلى البالونات واحسب كم بقي منها بعد أن تطير بعضها! اضغط على البالونات التي طارت لتحذفها.</p>
+    </div>
+
+    <div class="balloon-game-box" id="balloon-box">
+      <div style="font-size:3rem;">🎈</div>
+      <div style="font-size:1.2rem;color:#bbb;font-weight:700;">اضغط ابدأ للعب!</div>
+      <button class="start-balloon-btn" onclick="startBalloon()">🚀 ابدأ اللعبة!</button>
+    </div>
+  </section>
+
+  <!-- ── PRACTICE ── -->
+  <section class="section" id="sec-practice">
+    <div class="section-title">تدرّب الآن! <span>💪</span></div>
+
+    <div class="practice-card">
+      <div class="score-row">
+        <div class="score-pill"><div class="sp-num" id="p-correct">٠</div><div class="sp-label">✅ صحيح</div></div>
+        <div class="score-pill"><div class="sp-num" id="p-wrong">٠</div><div class="sp-label">❌ خطأ</div></div>
+        <div class="score-pill"><div class="sp-num" id="p-total">٠</div><div class="sp-label">📊 المجموع</div></div>
+      </div>
+
+      <div class="prac-eq">
+        <span class="prac-num" id="p-a">٧</span>
+        <span class="prac-op">−</span>
+        <span class="prac-num" id="p-b">٣</span>
+        <span class="prac-eq-text">=</span>
+        <span class="prac-box" id="p-blank">?</span>
+      </div>
+
+      <div class="choices-grid" id="p-choices"></div>
+      <div class="prac-feedback" id="p-feedback"></div>
+      <button class="next-btn" id="p-next" onclick="nextPractice()">السؤال التالي ←</button>
+    </div>
+  </section>
+
+  <!-- ── SPEED ── -->
+  <section class="section" id="sec-speed">
+    <div class="section-title">سباق السرعة! <span>⚡</span></div>
+
+    <div id="speed-game">
+      <div class="speed-header">
+        <div class="timer-box">
+          <div class="timer-num" id="s-timer">٦٠</div>
+          <div class="timer-label">⏱ ثانية</div>
+        </div>
+        <div class="score-row" style="margin:0;gap:12px;">
+          <div class="score-pill"><div class="sp-num" id="s-score">٠</div><div class="sp-label">🏆 النقاط</div></div>
+          <div class="score-pill"><div class="sp-num" id="s-streak">٠</div><div class="sp-label">🔥 تتالي</div></div>
+        </div>
+      </div>
+
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="s-progress" style="width:100%"></div>
+      </div>
+
+      <div class="speed-card">
+        <div class="speed-eq">
+          <span id="s-a">٧</span>
+          <span class="s-op"> − </span>
+          <span id="s-b">٣</span>
+          <span> = </span>
+          <span style="color:#ddd;">?</span>
+        </div>
+        <input type="number" class="speed-input" id="s-input"
+          placeholder="؟" min="0" max="99"
+          onkeydown="if(event.key==='Enter') checkSpeed()">
+        <br>
+        <button class="speed-submit" onclick="checkSpeed()">✅ تأكيد</button>
+        <div class="prac-feedback" id="s-feedback" style="margin-top:14px;"></div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button class="nav-btn primary-btn" onclick="startSpeed()" id="s-start-btn">🚀 ابدأ السباق!</button>
+      </div>
+    </div>
+
+    <div class="result-screen" id="speed-result">
+      <div class="result-emoji" id="r-emoji">🏆</div>
+      <div class="result-title">انتهى الوقت!</div>
+      <div class="result-score" id="r-score">٠ نقطة</div>
+      <div class="result-msg" id="r-msg"></div>
+      <button class="restart-btn" onclick="restartSpeed()">🔄 العب مجدداً</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const randInt = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+
+// ── LEARN DATA ──
+const lessons = [
+  {a:5,b:2,desc:'لدينا ٥ تفاحات، أكلنا ٢ منها — تبقّت لنا ٣ تفاحات!',emoji:'🍎'},
+  {a:4,b:1,desc:'كانت لدينا ٤ فراشات، طارت واحدة — بقيت ٣ فراشات!',emoji:'🦋'},
+  {a:6,b:3,desc:'في السلة ٦ كرات، أخذنا ٣ منها — تبقّى ٣ كرات!',emoji:'⚽'},
+  {a:7,b:2,desc:'كان معنا ٧ بالونات، انفجر ٢ منها — بقي ٥ بالونات!',emoji:'🎈'},
+  {a:8,b:3,desc:'على الشجرة ٨ عصافير، طارت ٣ — تبقّت ٥ عصافير!',emoji:'🐦'},
+  {a:9,b:4,desc:'في الطبق ٩ حبات فراولة، أكلنا ٤ — بقي ٥ حبات!',emoji:'🍓'},
+  {a:10,b:3,desc:'لدينا ١٠ نجوم، أخفى الغيم ٣ منها — يُرى ٧ نجوم!',emoji:'⭐'},
+  {a:8,b:5,desc:'في الحديقة ٨ زهور، قُطفت ٥ — بقيت ٣ زهور!',emoji:'🌸'},
+  {a:9,b:6,desc:'كانت هناك ٩ سمكات، اصطدنا ٦ — تبقّت ٣ سمكات!',emoji:'🐟'},
+  {a:10,b:5,desc:'عندنا ١٠ مصابيح، انطفأت ٥ — لا يزال ٥ مضاء!',emoji:'💡'},
+];
+
+let lIndex = 0;
+function renderLearn(){
+  const d = lessons[lIndex];
+  const res = d.a - d.b;
+  document.getElementById('l-a').textContent   = toAr(d.a);
+  document.getElementById('l-b').textContent   = toAr(d.b);
+  document.getElementById('l-res').textContent = toAr(res);
+  document.getElementById('l-name').textContent = `${toAr(d.a)} − ${toAr(d.b)} = ${toAr(res)}`;
+  document.getElementById('l-desc').textContent = d.desc;
+  document.getElementById('l-counter').textContent = `${toAr(lIndex+1)} / ${toAr(lessons.length)}`;
+
+  // emoji row: kept ✓ + removed ✕
+  const emojiEl = document.getElementById('l-emojis');
+  emojiEl.innerHTML =
+    `<span style="opacity:1">${d.emoji.repeat(res)}</span>` +
+    `<span style="opacity:.25;text-decoration:line-through">${d.emoji.repeat(d.b)}</span>`;
+
+  // blocks
+  const bl = document.getElementById('l-blocks');
+  let html = '<div class="block-row">';
+  for(let i=0;i<d.a;i++){
+    const cls = i < res ? 'block kept' : 'block removed';
+    html += `<div class="${cls}" style="animation-delay:${i*.05}s"></div>`;
+  }
+  html += '</div>';
+  bl.innerHTML = html;
+
+  document.getElementById('topBar').style.width = ((lIndex+1)/lessons.length*100)+'%';
+}
+function learnChange(dir){
+  lIndex = (lIndex + dir + lessons.length) % lessons.length;
+  renderLearn();
+}
+renderLearn();
+
+// ── BALLOON GAME ──
+const balloonEmojis = ['🔴','🟠','🟡','🟢','🔵','🟣','🩷','🤍'];
+let bCorrect=0, bWrong=0, bTotal=0, bCurrent={total:0,pop:0,left:0}, bPopped=0, bDone=false;
+
+function startBalloon(){
+  bCurrent.total = randInt(4,9);
+  bCurrent.pop   = randInt(1, bCurrent.total-1);
+  bCurrent.left  = bCurrent.total - bCurrent.pop;
+  bPopped = 0; bDone = false;
+
+  const box = document.getElementById('balloon-box');
+  const emoji = balloonEmojis[randInt(0,balloonEmojis.length-1)];
+
+  box.innerHTML = `
+    <div class="balloon-question">
+      عندنا <strong>${toAr(bCurrent.total)}</strong> بالون 🎈<br>
+      اضغط على <strong style="color:var(--primary)">${toAr(bCurrent.pop)}</strong> بالونات لتطيرها!
+    </div>
+    <div class="balloon-eq">
+      ${toAr(bCurrent.total)} <span class="b-gone">− ${toAr(bCurrent.pop)}</span> = <span class="b-left" id="b-answer">?</span>
+    </div>
+    <div class="balloons-area" id="b-area"></div>
+    <div class="balloon-feedback" id="b-feedback"></div>
+    <div class="balloon-score-row">
+      <div class="score-pill"><div class="sp-num" id="b-correct">${toAr(bCorrect)}</div><div class="sp-label">✅ صحيح</div></div>
+      <div class="score-pill"><div class="sp-num" id="b-total">${toAr(bTotal)}</div><div class="sp-label">📊 المجموع</div></div>
+    </div>
+  `;
+
+  const area = document.getElementById('b-area');
+  for(let i=0;i<bCurrent.total;i++){
+    const b = document.createElement('span');
+    b.className = 'balloon';
+    b.textContent = emoji;
+    b.style.animationDelay = (i*.06)+'s';
+    b.onclick = () => popBalloon(b);
+    area.appendChild(b);
+  }
+}
+
+function popBalloon(el){
+  if(bDone || el.classList.contains('popped')) return;
+  el.classList.add('popped');
+  bPopped++;
+
+  if(bPopped === bCurrent.pop){
+    bDone = true; bTotal++;
+    document.getElementById('b-answer').textContent = toAr(bCurrent.left);
+    document.getElementById('b-feedback').textContent = '🎉 رائع! طيّرت العدد الصحيح!';
+    document.getElementById('b-feedback').className = 'balloon-feedback correct-fb';
+    bCorrect++;
+    document.getElementById('b-correct').textContent = toAr(bCorrect);
+    document.getElementById('b-total').textContent   = toAr(bTotal);
+    launchConfettiCenter();
+    setTimeout(()=>{
+      const box = document.getElementById('balloon-box');
+      const btn = document.createElement('button');
+      btn.className = 'next-balloon-btn';
+      btn.textContent = 'السؤال التالي ←';
+      btn.onclick = startBalloon;
+      box.appendChild(btn);
+    },600);
+  } else if(bPopped > bCurrent.pop){
+    document.getElementById('b-feedback').textContent = `❌ طيّرت أكثر من اللازم! المطلوب ${toAr(bCurrent.pop)}`;
+    document.getElementById('b-feedback').className = 'balloon-feedback wrong-fb';
+  }
+}
+
+// ── PRACTICE ──
+let pCorrect=0, pWrong=0, pTotal=0, pAnswered=false;
+
+function nextPractice(){
+  pAnswered=false;
+  document.getElementById('p-feedback').textContent='';
+  document.getElementById('p-feedback').className='prac-feedback';
+  document.getElementById('p-next').style.display='none';
+  document.querySelectorAll('#p-choices .choice-btn').forEach(b=>b.className='choice-btn');
+
+  const a = randInt(2,10), b = randInt(1,a), res = a-b;
+  document.getElementById('p-a').textContent = toAr(a);
+  document.getElementById('p-b').textContent = toAr(b);
+  document.getElementById('p-blank').textContent = '?';
+  document.getElementById('p-blank').dataset.answer = res;
+
+  const wrong = new Set();
+  while(wrong.size < 3){
+    const w = res + randInt(-3,3);
+    if(w!==res && w>=0 && w<=10) wrong.add(w);
+  }
+  const choices = [...wrong, res].sort(()=>Math.random()-.5);
+  const gc = document.getElementById('p-choices');
+  gc.innerHTML='';
+  choices.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=toAr(c);
+    btn.onclick=()=>checkPractice(btn,c===res,res);
+    gc.appendChild(btn);
+  });
+}
+
+function checkPractice(btn,isCorrect,res){
+  if(pAnswered) return;
+  pAnswered=true; pTotal++;
+  document.getElementById('p-total').textContent=toAr(pTotal);
+  if(isCorrect){
+    pCorrect++;
+    document.getElementById('p-correct').textContent=toAr(pCorrect);
+    btn.classList.add('correct');
+    document.getElementById('p-feedback').textContent='🎉 ممتاز! إجابة صحيحة!';
+    document.getElementById('p-feedback').className='prac-feedback correct-fb';
+    document.getElementById('p-blank').textContent=toAr(res);
+    launchConfetti(btn);
+  } else {
+    pWrong++;
+    document.getElementById('p-wrong').textContent=toAr(pWrong);
+    btn.classList.add('wrong');
+    document.getElementById('p-feedback').textContent=`❌ الإجابة الصحيحة: ${toAr(res)}`;
+    document.getElementById('p-feedback').className='prac-feedback wrong-fb';
+    document.getElementById('p-blank').textContent=toAr(res);
+    document.querySelectorAll('#p-choices .choice-btn').forEach(b=>{
+      if(b.textContent===toAr(res)) b.classList.add('correct');
+    });
+  }
+  document.getElementById('p-next').style.display='inline-block';
+}
+
+// ── SPEED ──
+let sTimer=null, sSeconds=60, sScore=0, sStreak=0, sRunning=false;
+let sCurrent={a:0,b:0,res:0};
+
+function genSpeed(){
+  const a=randInt(2,10), b=randInt(1,a);
+  sCurrent={a,b,res:a-b};
+  document.getElementById('s-a').textContent=toAr(a);
+  document.getElementById('s-b').textContent=toAr(b);
+  document.getElementById('s-input').value='';
+  document.getElementById('s-input').className='speed-input';
+  document.getElementById('s-feedback').textContent='';
+  document.getElementById('s-input').focus();
+}
+
+function startSpeed(){
+  if(sRunning) return;
+  sRunning=true; sSeconds=60; sScore=0; sStreak=0;
+  document.getElementById('s-score').textContent='٠';
+  document.getElementById('s-streak').textContent='٠';
+  document.getElementById('s-start-btn').style.display='none';
+  document.getElementById('speed-result').classList.remove('show');
+  document.getElementById('speed-game').style.display='block';
+  genSpeed();
+  sTimer=setInterval(()=>{
+    sSeconds--;
+    document.getElementById('s-timer').textContent=toAr(sSeconds);
+    if(sSeconds<=10) document.getElementById('s-timer').classList.add('danger');
+    document.getElementById('s-progress').style.width=(sSeconds/60*100)+'%';
+    if(sSeconds<=0){ clearInterval(sTimer); endSpeed(); }
+  },1000);
+}
+
+function checkSpeed(){
+  if(!sRunning) return;
+  const val=parseInt(document.getElementById('s-input').value);
+  if(isNaN(val)) return;
+  const inp=document.getElementById('s-input');
+  if(val===sCurrent.res){
+    sScore+=10+(sStreak>=3?5:0); sStreak++;
+    document.getElementById('s-score').textContent=toAr(sScore);
+    document.getElementById('s-streak').textContent=toAr(sStreak);
+    inp.classList.add('correct-input');
+    document.getElementById('s-feedback').textContent=sStreak>=3?`🔥 ${toAr(sStreak)}x تتالي!`:'✅ صحيح!';
+    document.getElementById('s-feedback').className='prac-feedback correct-fb';
+    launchConfettiCenter();
+    setTimeout(genSpeed,400);
+  } else {
+    sStreak=0;
+    document.getElementById('s-streak').textContent='٠';
+    inp.classList.add('wrong-input');
+    document.getElementById('s-feedback').textContent=`❌ الإجابة: ${toAr(sCurrent.res)}`;
+    document.getElementById('s-feedback').className='prac-feedback wrong-fb';
+    setTimeout(()=>{ inp.classList.remove('wrong-input'); inp.value=''; inp.focus(); },600);
+  }
+}
+
+function endSpeed(){
+  sRunning=false;
+  document.getElementById('speed-game').style.display='none';
+  document.getElementById('speed-result').classList.add('show');
+  document.getElementById('r-score').textContent=`${toAr(sScore)} نقطة`;
+  let emoji='🌟', msg='';
+  if(sScore>=150){ emoji='🏆'; msg='واو! أنت بطل الطرح! نتيجة رائعة جداً!'; }
+  else if(sScore>=100){ emoji='🎉'; msg='رائع جداً! استمر وستصل إلى القمة!'; }
+  else if(sScore>=50){ emoji='👍'; msg='أحسنت! استمر في التدريب!'; }
+  else { emoji='💪'; msg='لا بأس! التدريب يجعلك أفضل. حاول مجدداً!'; }
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-msg').textContent=msg;
+  launchConfettiCenter();
+}
+
+function restartSpeed(){
+  document.getElementById('speed-result').classList.remove('show');
+  document.getElementById('speed-game').style.display='block';
+  document.getElementById('s-start-btn').style.display='inline-block';
+  document.getElementById('s-timer').textContent='٦٠';
+  document.getElementById('s-timer').classList.remove('danger');
+  document.getElementById('s-progress').style.width='100%';
+}
+
+// ── TABS ──
+function switchTab(id, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='practice') nextPractice();
+}
+
+// ── CONFETTI ──
+function launchConfetti(el){
+  const rect=el.getBoundingClientRect();
+  const colors=['#ff6b9d','#ffd93d','#4ecdc4','#ff6b35','#a855f7','#06d6a0'];
+  for(let i=0;i<16;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${rect.left+Math.random()*rect.width}px;top:${rect.top}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*.3}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+function launchConfettiCenter(){
+  const colors=['#ff6b9d','#ffd93d','#4ecdc4','#ff6b35','#a855f7','#06d6a0'];
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${30+Math.random()*40}%;top:${window.scrollY+80}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*.2}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+
+nextPractice();
+document.getElementById('topBar').style.width='10%';
+</script>
+</body>
+</html>

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المقارنة — إحسب بذكاء كيدز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+:root{
+  --primary:#a855f7;
+  --secondary:#c084fc;
+  --accent:#ffd93d;
+  --pink:#ff6b9d;
+  --orange:#ff6b35;
+  --green:#06d6a0;
+  --blue:#4ecdc4;
+}
+
+body{
+  font-family:"Marhey", sans-serif;
+  background:#fdf4ff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.bg-blobs{
+  position:fixed; inset:0;
+  pointer-events:none; z-index:0; overflow:hidden;
+}
+.blob{
+  position:absolute; border-radius:50%;
+  filter:blur(70px); opacity:.13;
+  animation:blobFloat 9s ease-in-out infinite;
+}
+.blob-1{ width:420px;height:420px;background:var(--primary);top:-120px;right:-100px;animation-delay:0s; }
+.blob-2{ width:360px;height:360px;background:var(--pink);bottom:-80px;left:-60px;animation-delay:-3s; }
+.blob-3{ width:260px;height:260px;background:var(--blue);top:45%;left:35%;animation-delay:-5s; }
+.blob-4{ width:200px;height:200px;background:var(--accent);bottom:25%;right:8%;animation-delay:-2s; }
+
+@keyframes blobFloat{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(18px,-18px) scale(1.05); }
+  66%{ transform:translate(-12px,12px) scale(.96); }
+}
+
+.top-progress{
+  position:fixed; top:0; left:0; right:0;
+  height:4px; z-index:999;
+  background:rgba(168,85,247,.15);
+}
+.top-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  width:0%; transition:width .5s ease;
+}
+
+.topbar{
+  position:relative; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 28px;
+}
+.back-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  background:white; color:#555; border:none; border-radius:14px;
+  padding:10px 18px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 3px 14px rgba(0,0,0,.08);
+  text-decoration:none;
+  transition:transform .2s, box-shadow .2s;
+}
+.back-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.12); }
+
+.lesson-badge{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; font-size:.82rem; font-weight:700;
+  padding:7px 18px; border-radius:20px;
+  box-shadow:0 4px 14px rgba(168,85,247,.35);
+}
+
+header{
+  position:relative; z-index:1;
+  text-align:center; padding:10px 20px 30px;
+}
+.header-emoji{
+  font-size:3.5rem; display:block; margin-bottom:12px;
+  animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+header h1{
+  font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:700; color:#1a1a2e;
+  animation:fadeDown .6s .1s ease both; margin-bottom:10px;
+}
+header p{
+  font-size:1.1rem; color:#888;
+  animation:fadeDown .6s .2s ease both;
+  max-width:460px; margin:0 auto; line-height:1.8;
+}
+
+.tabs-wrap{
+  position:relative; z-index:1;
+  display:flex; justify-content:center; gap:10px;
+  flex-wrap:wrap; padding:0 20px 28px;
+  animation:fadeUp .5s .3s ease both;
+}
+.tab-btn{
+  background:white; border:2px solid transparent;
+  border-radius:16px; padding:10px 22px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#bbb;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.tab-btn:hover{ transform:translateY(-3px); color:#888; }
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 20px rgba(168,85,247,.4);
+  transform:translateY(-3px);
+}
+
+.main{
+  position:relative; z-index:1;
+  max-width:900px; margin:0 auto;
+  padding:0 24px 80px;
+}
+.section{ display:none; }
+.section.active{ display:block; animation:fadeUp .45s ease both; }
+
+.section-title{
+  text-align:center;
+  font-size:1.4rem; font-weight:700; color:#1a1a2e;
+  margin-bottom:28px;
+}
+.section-title span{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* ── SYMBOLS INTRO ── */
+.symbols-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px; margin-bottom:32px;
+}
+.symbol-card{
+  background:white; border-radius:24px;
+  padding:28px 16px; text-align:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.08);
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  cursor:default;
+}
+.symbol-card:hover{
+  transform:translateY(-8px) scale(1.03);
+  box-shadow:0 18px 40px rgba(0,0,0,.13);
+}
+.symbol-card:nth-child(1){ border-top:5px solid var(--orange); animation-delay:.1s; }
+.symbol-card:nth-child(2){ border-top:5px solid var(--primary); animation-delay:.2s; }
+.symbol-card:nth-child(3){ border-top:5px solid var(--green); animation-delay:.3s; }
+
+.sym-icon{
+  font-size:3.5rem; font-weight:900; line-height:1;
+  margin-bottom:10px; display:block;
+}
+.symbol-card:nth-child(1) .sym-icon{ color:var(--orange); }
+.symbol-card:nth-child(2) .sym-icon{ color:var(--primary); }
+.symbol-card:nth-child(3) .sym-icon{ color:var(--green); }
+
+.sym-label{
+  font-size:1.1rem; font-weight:700; color:#1a1a2e; margin-bottom:4px;
+}
+.sym-sub{
+  font-size:.85rem; color:#bbb; line-height:1.6;
+}
+
+/* ── LEARN BOX ── */
+.learn-box{
+  background:white; border-radius:28px;
+  padding:36px 28px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  margin-bottom:24px;
+  border-top:5px solid var(--primary);
+}
+
+/* scale visualization */
+.scale-wrap{
+  display:flex; align-items:flex-end; justify-content:center;
+  gap:0; margin:28px auto; max-width:380px;
+  position:relative;
+}
+.scale-side{
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; gap:10px;
+  transition:transform .6s cubic-bezier(.34,1.56,.64,1);
+}
+.scale-side.heavier{ transform:translateY(18px); }
+.scale-side.lighter{ transform:translateY(-18px); }
+.scale-side.equal{ transform:translateY(0); }
+
+.scale-num{
+  font-size:3.5rem; font-weight:800;
+  line-height:1;
+}
+.side-left .scale-num{
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.side-right .scale-num{
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+.scale-plate{
+  width:110px; height:14px;
+  border-radius:10px; margin-top:4px;
+}
+.side-left .scale-plate{ background:linear-gradient(90deg,var(--orange),var(--pink)); }
+.side-right .scale-plate{ background:linear-gradient(90deg,var(--blue),var(--green)); }
+
+.scale-pole{
+  width:6px; background:linear-gradient(180deg,#ddd,#f0f0f0);
+  border-radius:3px; align-self:stretch; margin:0 4px;
+  min-height:80px; flex-shrink:0;
+}
+.scale-base{
+  display:flex; justify-content:center; margin-top:8px;
+}
+.scale-base-bar{
+  width:200px; height:10px;
+  background:linear-gradient(90deg,#ddd,#eee);
+  border-radius:10px;
+}
+
+.result-symbol{
+  font-size:5rem; font-weight:900;
+  line-height:1; margin:8px 0;
+  display:block;
+  animation:bounceIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.result-bigger{ color:var(--orange); }
+.result-equal{ color:var(--primary); }
+.result-smaller{ color:var(--green); }
+
+.result-sentence{
+  font-size:1.3rem; font-weight:700; color:#1a1a2e; margin-bottom:6px;
+}
+.result-desc{
+  font-size:1rem; color:#999; line-height:1.8;
+}
+
+/* dots visual under numbers */
+.scale-dots{
+  display:flex; flex-wrap:wrap;
+  justify-content:center; gap:4px; max-width:100px;
+}
+.sdot{
+  width:10px; height:10px; border-radius:50%;
+  animation:popIn .2s ease both;
+}
+.side-left .sdot{ background:linear-gradient(135deg,var(--orange),var(--pink)); }
+.side-right .sdot{ background:linear-gradient(135deg,var(--blue),var(--green)); }
+
+.learn-nav{
+  display:flex; justify-content:center; gap:14px; margin-top:28px;
+}
+.nav-btn{
+  background:white; border:2px solid #f0f0f0;
+  border-radius:14px; padding:12px 24px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#888;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-btn:hover{
+  transform:translateY(-3px) scale(1.04);
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 8px 20px rgba(168,85,247,.4);
+}
+.nav-btn.primary-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 18px rgba(168,85,247,.4);
+}
+
+/* ── DRAG GAME ── */
+.drag-box{
+  background:white; border-radius:28px;
+  padding:36px 24px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--accent);
+}
+.drag-question{
+  font-size:1.1rem; color:#888; margin-bottom:24px; line-height:1.8;
+}
+.drag-eq{
+  display:flex; align-items:center; justify-content:center;
+  gap:16px; flex-wrap:wrap; margin:10px 0 30px;
+}
+.drag-num{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:800; line-height:1;
+}
+.drag-left{
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.drag-right{
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.drag-slot{
+  width:80px; height:80px;
+  border:3px dashed #ddd; border-radius:20px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.5rem; font-weight:900; color:#ddd;
+  transition:all .3s; background:#fafafa;
+  cursor:pointer;
+}
+.drag-slot.filled{
+  border-color:var(--primary);
+  background:linear-gradient(135deg,#f3e8ff,#e9d5ff);
+  color:var(--primary);
+  animation:correctPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+.drag-slot.correct-slot{
+  border-color:var(--green); background:linear-gradient(135deg,#d4edda,#c3e6cb);
+  color:var(--green);
+}
+.drag-slot.wrong-slot{
+  border-color:#ff4757; background:linear-gradient(135deg,#fde8e8,#fcd5d5);
+  color:#ff4757; animation:shake .4s ease;
+}
+
+.sym-choices{
+  display:flex; justify-content:center; gap:16px; margin:20px 0;
+}
+.sym-btn{
+  width:70px; height:70px;
+  background:white; border:2.5px solid #f0f0f0;
+  border-radius:18px;
+  font-size:2rem; font-weight:900; cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  display:flex; align-items:center; justify-content:center;
+}
+.sym-btn:hover{
+  transform:translateY(-5px) scale(1.1);
+  box-shadow:0 10px 24px rgba(0,0,0,.14);
+}
+.sym-btn.selected{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  border-color:transparent; color:white;
+  box-shadow:0 8px 22px rgba(168,85,247,.45);
+}
+.sym-btn[data-sym=">"].selected{ background:linear-gradient(135deg,var(--orange),var(--pink)); }
+.sym-btn[data-sym="="].selected{ background:linear-gradient(135deg,var(--primary),var(--secondary)); }
+.sym-btn[data-sym="<"].selected{ background:linear-gradient(135deg,var(--blue),var(--green)); }
+
+.drag-feedback{
+  font-size:1.5rem; font-weight:700; min-height:40px;
+  margin:10px 0; transition:all .3s;
+}
+.drag-feedback.correct-fb{ color:var(--green); }
+.drag-feedback.wrong-fb{ color:#ff4757; }
+
+.drag-score-row{
+  display:flex; justify-content:center; gap:16px; margin:16px 0;
+}
+.score-pill{
+  background:#fafafa; border:1.5px solid #f0f0f0;
+  border-radius:14px; padding:10px 22px; text-align:center;
+}
+.score-pill .sp-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.score-pill .sp-label{ font-size:.8rem; color:#bbb; font-weight:600; }
+
+.check-btn, .next-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 34px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(168,85,247,.4);
+  transition:transform .2s, box-shadow .2s;
+  margin:6px;
+}
+.check-btn:hover, .next-btn:hover{ transform:translateY(-3px); box-shadow:0 10px 28px rgba(168,85,247,.5); }
+
+/* ── SPEED ── */
+.speed-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; flex-wrap:wrap; gap:10px;
+}
+.timer-box{
+  background:white; border-radius:16px;
+  padding:12px 22px; text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  border-top:3px solid var(--primary);
+}
+.timer-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.timer-label{ font-size:.75rem; color:#bbb; font-weight:600; }
+.timer-num.danger{
+  background:linear-gradient(135deg,#ff4757,var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:pulse .5s ease-in-out infinite;
+}
+
+.speed-card{
+  background:white; border-radius:28px;
+  padding:36px 28px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--accent);
+}
+.speed-eq{
+  display:flex; align-items:center; justify-content:center;
+  gap:20px; flex-wrap:wrap; margin:20px 0;
+}
+.speed-num{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:800; line-height:1;
+}
+.speed-left{
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.speed-right{
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.speed-slot{
+  width:70px; height:70px;
+  border:3px dashed #ddd; border-radius:18px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.2rem; font-weight:900; color:#ddd;
+  background:#fafafa;
+}
+.speed-sym-btns{
+  display:flex; justify-content:center; gap:14px; margin:16px 0;
+}
+.speed-sym-btn{
+  width:65px; height:65px;
+  background:white; border:2.5px solid #f0f0f0;
+  border-radius:16px;
+  font-size:1.9rem; font-weight:900; cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  display:flex; align-items:center; justify-content:center;
+}
+.speed-sym-btn:hover{ transform:translateY(-4px) scale(1.1); }
+.speed-sym-btn.correct-slot{
+  background:linear-gradient(135deg,var(--green),#34d399);
+  border-color:transparent; color:white;
+  animation:correctPop .3s ease;
+  box-shadow:0 8px 22px rgba(6,214,160,.4);
+}
+.speed-sym-btn.wrong-slot{
+  background:linear-gradient(135deg,#ff4757,var(--pink));
+  border-color:transparent; color:white;
+  animation:shake .3s ease;
+}
+
+.progress-bar-bg{
+  background:#f0f0f0; border-radius:10px;
+  height:10px; overflow:hidden; margin:16px 0;
+}
+.progress-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  border-radius:10px; transition:width .4s ease;
+}
+
+.result-screen{
+  background:white; border-radius:28px;
+  padding:50px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  display:none; animation:fadeUp .5s ease both;
+}
+.result-screen.show{ display:block; }
+.result-emoji{ font-size:4rem; margin-bottom:16px; animation:bounceIn .6s ease both; }
+.result-title{ font-size:2rem; font-weight:700; color:#1a1a2e; margin-bottom:8px; }
+.result-score{
+  font-size:3.5rem; font-weight:700; margin:20px 0;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.result-msg{ font-size:1.1rem; color:#888; margin-bottom:28px; line-height:1.8; }
+.restart-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 36px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(168,85,247,.4);
+  transition:transform .2s;
+}
+.restart-btn:hover{ transform:translateY(-3px); }
+
+/* confetti */
+.confetti-piece{
+  position:fixed; width:10px; height:10px;
+  border-radius:2px; pointer-events:none;
+  animation:confettiFall 1.2s ease-in forwards; z-index:9999;
+}
+@keyframes confettiFall{
+  0%{ opacity:1; transform:translateY(0) rotate(0deg); }
+  100%{ opacity:0; transform:translateY(200px) rotate(540deg); }
+}
+
+@keyframes fadeDown{ from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes popIn{ from{opacity:0;transform:scale(.7)} to{opacity:1;transform:scale(1)} }
+@keyframes bounceIn{ from{opacity:0;transform:scale(.5) rotate(-10deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes correctPop{ 0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)} }
+@keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+@keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+
+::-webkit-scrollbar{ width:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:#e9d5ff; border-radius:10px; }
+</style>
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill" id="topBar"></div></div>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div>
+  <div class="blob blob-3"></div><div class="blob blob-4"></div>
+</div>
+
+<div class="topbar">
+  <a href="./explain.html" class="back-btn">← العودة</a>
+  <div class="lesson-badge">⚖️ الدرس ٤ — المقارنة</div>
+</div>
+
+<header>
+  <span class="header-emoji">⚖️</span>
+  <h1>تعلّم المقارنة</h1>
+  <p>تعلّم كيف تقارن بين الأرقام وتعرف مَن الأكبر والأصغر والمتساوي!</p>
+</header>
+
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('symbols',this)">🔣 الرموز</button>
+  <button class="tab-btn" onclick="switchTab('learn',this)">📖 تعلّم</button>
+  <button class="tab-btn" onclick="switchTab('drag',this)">🎮 اختر الرمز</button>
+  <button class="tab-btn" onclick="switchTab('speed',this)">⚡ سباق السرعة</button>
+</div>
+
+<main class="main">
+
+  <!-- ── SYMBOLS ── -->
+  <section class="section active" id="sec-symbols">
+    <div class="section-title">تعرّف على رموز المقارنة <span>🔣</span></div>
+
+    <div class="symbols-row">
+      <div class="symbol-card">
+        <span class="sym-icon">&gt;</span>
+        <div class="sym-label">أكبر من</div>
+        <div class="sym-sub">الرقم على اليمين أكبر من الرقم على اليسار<br>مثال: ٧ &gt; ٣</div>
+      </div>
+      <div class="symbol-card">
+        <span class="sym-icon">=</span>
+        <div class="sym-label">يساوي</div>
+        <div class="sym-sub">الرقمان متساويان تماماً<br>مثال: ٥ = ٥</div>
+      </div>
+      <div class="symbol-card">
+        <span class="sym-icon">&lt;</span>
+        <div class="sym-label">أصغر من</div>
+        <div class="sym-sub">الرقم على اليمين أصغر من الرقم على اليسار<br>مثال: ٢ &lt; ٨</div>
+      </div>
+    </div>
+
+    <!-- crocodile tip -->
+    <div style="background:white;border-radius:24px;padding:28px;box-shadow:0 6px 22px rgba(0,0,0,.07);text-align:center;border-top:4px solid var(--accent);">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🐊</div>
+      <div style="font-size:1.15rem;font-weight:700;color:#1a1a2e;margin-bottom:8px;">حيلة التمساح!</div>
+      <div style="font-size:1rem;color:#888;line-height:1.9;max-width:500px;margin:0 auto;">
+        فكّر في رمز المقارنة كفم التمساح 🐊<br>
+        فم التمساح دائماً يفتح باتجاه الرقم <strong style="color:var(--orange)">الأكبر</strong> — لأنه يريد أن يأكله! 😄<br>
+        <span style="font-size:1.4rem;font-weight:900;color:var(--orange)">٧</span>
+        <span style="font-size:1.4rem;font-weight:900;color:var(--primary)"> &gt; </span>
+        <span style="font-size:1.4rem;font-weight:900;color:var(--blue)">٣</span>
+        &nbsp;→ التمساح يفتح فمه نحو ٧ لأنه الأكبر!
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LEARN ── -->
+  <section class="section" id="sec-learn">
+    <div class="section-title">شاهد المقارنة بالميزان <span>⚖️</span></div>
+
+    <div class="learn-box">
+      <div class="result-sentence" id="l-sentence">٧ أكبر من ٣</div>
+      <div class="result-desc" id="l-desc">لدينا ٧ تفاحات من جهة و ٣ تفاحات من الجهة الأخرى — ٧ أثقل وأكبر!</div>
+
+      <!-- Scale -->
+      <div class="scale-wrap">
+        <div class="scale-side side-left" id="scale-left">
+          <div class="scale-num" id="sc-a">٧</div>
+          <div class="scale-dots" id="sc-dots-a"></div>
+          <div class="scale-plate"></div>
+        </div>
+        <div class="scale-pole"></div>
+        <div class="scale-side side-right" id="scale-right">
+          <div class="scale-num" id="sc-b">٣</div>
+          <div class="scale-dots" id="sc-dots-b"></div>
+          <div class="scale-plate"></div>
+        </div>
+      </div>
+      <div class="scale-base"><div class="scale-base-bar"></div></div>
+
+      <span class="result-symbol" id="l-symbol">></span>
+      <div style="font-size:1rem;color:#bbb;margin-top:4px;" id="l-reading">سبعة أكبر من ثلاثة</div>
+    </div>
+
+    <div class="learn-nav">
+      <button class="nav-btn" onclick="learnChange(-1)">→ السابق</button>
+      <div style="background:white;border-radius:14px;padding:10px 22px;font-size:1rem;font-weight:700;color:#1a1a2e;box-shadow:0 3px 12px rgba(0,0,0,.08);display:flex;align-items:center;">
+        <span id="l-counter">١ / ١٢</span>
+      </div>
+      <button class="nav-btn primary-btn" onclick="learnChange(1)">التالي ←</button>
+    </div>
+  </section>
+
+  <!-- ── DRAG ── -->
+  <section class="section" id="sec-drag">
+    <div class="section-title">اختر الرمز الصحيح! <span>🎯</span></div>
+
+    <div class="drag-box">
+      <div class="drag-score-row">
+        <div class="score-pill"><div class="sp-num" id="d-correct">٠</div><div class="sp-label">✅ صحيح</div></div>
+        <div class="score-pill"><div class="sp-num" id="d-wrong">٠</div><div class="sp-label">❌ خطأ</div></div>
+        <div class="score-pill"><div class="sp-num" id="d-total">٠</div><div class="sp-label">📊 المجموع</div></div>
+      </div>
+
+      <div class="drag-eq">
+        <span class="drag-num drag-left" id="d-a">٧</span>
+        <div class="drag-slot" id="d-slot">?</div>
+        <span class="drag-num drag-right" id="d-b">٣</span>
+      </div>
+
+      <div class="sym-choices">
+        <button class="sym-btn" data-sym=">" onclick="selectSym(this)">&gt;</button>
+        <button class="sym-btn" data-sym="=" onclick="selectSym(this)">=</button>
+        <button class="sym-btn" data-sym="<" onclick="selectSym(this)">&lt;</button>
+      </div>
+
+      <div>
+        <button class="check-btn" onclick="checkDrag()">✅ تحقّق</button>
+        <button class="next-btn" id="d-next" onclick="nextDrag()" style="display:none;">التالي ←</button>
+      </div>
+      <div class="drag-feedback" id="d-feedback"></div>
+    </div>
+  </section>
+
+  <!-- ── SPEED ── -->
+  <section class="section" id="sec-speed">
+    <div class="section-title">سباق السرعة! <span>⚡</span></div>
+
+    <div id="speed-game">
+      <div class="speed-header">
+        <div class="timer-box">
+          <div class="timer-num" id="s-timer">٦٠</div>
+          <div class="timer-label">⏱ ثانية</div>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div class="score-pill"><div class="sp-num" id="s-score">٠</div><div class="sp-label">🏆 النقاط</div></div>
+          <div class="score-pill"><div class="sp-num" id="s-streak">٠</div><div class="sp-label">🔥 تتالي</div></div>
+        </div>
+      </div>
+
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="s-progress" style="width:100%"></div>
+      </div>
+
+      <div class="speed-card">
+        <div class="speed-eq">
+          <span class="speed-num speed-left" id="s-a">٧</span>
+          <div class="speed-slot" id="s-slot">?</div>
+          <span class="speed-num speed-right" id="s-b">٣</span>
+        </div>
+        <div class="speed-sym-btns" id="s-btns">
+          <button class="speed-sym-btn" data-sym=">" onclick="checkSpeed(this)">&gt;</button>
+          <button class="speed-sym-btn" data-sym="=" onclick="checkSpeed(this)">=</button>
+          <button class="speed-sym-btn" data-sym="<" onclick="checkSpeed(this)">&lt;</button>
+        </div>
+        <div class="drag-feedback" id="s-feedback"></div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button class="nav-btn primary-btn" onclick="startSpeed()" id="s-start-btn">🚀 ابدأ السباق!</button>
+      </div>
+    </div>
+
+    <div class="result-screen" id="speed-result">
+      <div class="result-emoji" id="r-emoji">🏆</div>
+      <div class="result-title">انتهى الوقت!</div>
+      <div class="result-score" id="r-score">٠ نقطة</div>
+      <div class="result-msg" id="r-msg"></div>
+      <button class="restart-btn" onclick="restartSpeed()">🔄 العب مجدداً</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const randInt = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+
+// arabic number names
+const arNames = ['','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة','عشرة',
+  'أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر','عشرون'];
+
+// ── LEARN DATA ──
+const learnData = [
+  {a:7,b:3},{a:2,b:8},{a:5,b:5},{a:9,b:4},{a:1,b:6},
+  {a:10,b:10},{a:3,b:7},{a:8,b:2},{a:6,b:6},{a:4,b:9},{a:5,b:3},{a:10,b:2}
+];
+
+function getSymbol(a,b){
+  if(a>b) return '>'; if(a<b) return '<'; return '=';
+}
+function getSentence(a,b){
+  const sym = getSymbol(a,b);
+  if(sym==='>') return `${toAr(a)} أكبر من ${toAr(b)}`;
+  if(sym==='<') return `${toAr(a)} أصغر من ${toAr(b)}`;
+  return `${toAr(a)} يساوي ${toAr(b)}`;
+}
+function getReading(a,b){
+  const sym = getSymbol(a,b);
+  const na = arNames[a]||toAr(a), nb = arNames[b]||toAr(b);
+  if(sym==='>') return `${na} أكبر من ${nb}`;
+  if(sym==='<') return `${na} أصغر من ${nb}`;
+  return `${na} يساوي ${nb}`;
+}
+function getDesc(a,b){
+  const sym = getSymbol(a,b);
+  if(sym==='>') return `الرقم ${toAr(a)} أكبر من ${toAr(b)} — الميزان يميل نحو ${toAr(a)}!`;
+  if(sym==='<') return `الرقم ${toAr(a)} أصغر من ${toAr(b)} — الميزان يميل نحو ${toAr(b)}!`;
+  return `الرقمان ${toAr(a)} و${toAr(b)} متساويان — الميزان في توازن تام!`;
+}
+
+let lIndex=0;
+function renderLearn(){
+  const {a,b} = learnData[lIndex];
+  const sym = getSymbol(a,b);
+  document.getElementById('sc-a').textContent = toAr(a);
+  document.getElementById('sc-b').textContent = toAr(b);
+  document.getElementById('l-sentence').textContent = getSentence(a,b);
+  document.getElementById('l-desc').textContent = getDesc(a,b);
+  document.getElementById('l-counter').textContent = `${toAr(lIndex+1)} / ${toAr(learnData.length)}`;
+  document.getElementById('l-reading').textContent = getReading(a,b);
+
+  // symbol
+  const symEl = document.getElementById('l-symbol');
+  symEl.textContent = sym;
+  symEl.className = 'result-symbol';
+  if(sym==='>') symEl.classList.add('result-bigger');
+  else if(sym==='=') symEl.classList.add('result-equal');
+  else symEl.classList.add('result-smaller');
+
+  // scale tilt
+  const sl = document.getElementById('scale-left');
+  const sr = document.getElementById('scale-right');
+  sl.className = 'scale-side side-left';
+  sr.className = 'scale-side side-right';
+  if(sym==='>'){
+    sl.classList.add('heavier');
+    sr.classList.add('lighter');
+  } else if(sym==='<'){
+    sl.classList.add('lighter');
+    sr.classList.add('heavier');
+  } else {
+    sl.classList.add('equal');
+    sr.classList.add('equal');
+  }
+
+  // dots
+  const da = document.getElementById('sc-dots-a');
+  const db = document.getElementById('sc-dots-b');
+  da.innerHTML = Array.from({length:Math.min(a,10)},(_,i)=>`<div class="sdot" style="animation-delay:${i*.05}s"></div>`).join('');
+  db.innerHTML = Array.from({length:Math.min(b,10)},(_,i)=>`<div class="sdot" style="animation-delay:${i*.05}s"></div>`).join('');
+
+  document.getElementById('topBar').style.width = ((lIndex+1)/learnData.length*100)+'%';
+}
+function learnChange(dir){
+  lIndex = (lIndex+dir+learnData.length)%learnData.length;
+  renderLearn();
+}
+renderLearn();
+
+// ── DRAG ──
+let dCorrect=0,dWrong=0,dTotal=0,dAnswered=false,dSelected=null,dCurrent={a:0,b:0};
+
+function newDragQ(){
+  dAnswered=false; dSelected=null;
+  document.getElementById('d-feedback').textContent='';
+  document.getElementById('d-feedback').className='drag-feedback';
+  document.getElementById('d-next').style.display='none';
+  document.getElementById('d-slot').textContent='?';
+  document.getElementById('d-slot').className='drag-slot';
+  document.querySelectorAll('.sym-btn').forEach(b=>b.classList.remove('selected'));
+
+  const a=randInt(1,10), b=randInt(1,10);
+  dCurrent={a,b};
+  document.getElementById('d-a').textContent=toAr(a);
+  document.getElementById('d-b').textContent=toAr(b);
+}
+
+function selectSym(btn){
+  if(dAnswered) return;
+  document.querySelectorAll('.sym-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  dSelected = btn.dataset.sym;
+  document.getElementById('d-slot').textContent = dSelected;
+  document.getElementById('d-slot').classList.add('filled');
+}
+
+function checkDrag(){
+  if(!dSelected || dAnswered) return;
+  dAnswered=true; dTotal++;
+  document.getElementById('d-total').textContent=toAr(dTotal);
+  const correct = getSymbol(dCurrent.a,dCurrent.b);
+  const slot = document.getElementById('d-slot');
+  if(dSelected===correct){
+    dCorrect++;
+    document.getElementById('d-correct').textContent=toAr(dCorrect);
+    slot.classList.remove('filled'); slot.classList.add('correct-slot');
+    document.getElementById('d-feedback').textContent='🎉 ممتاز! الرمز صحيح!';
+    document.getElementById('d-feedback').className='drag-feedback correct-fb';
+    launchConfettiCenter();
+  } else {
+    dWrong++;
+    document.getElementById('d-wrong').textContent=toAr(dWrong);
+    slot.classList.remove('filled'); slot.classList.add('wrong-slot');
+    slot.textContent=correct;
+    document.getElementById('d-feedback').textContent=`❌ الرمز الصحيح هو: ${correct}`;
+    document.getElementById('d-feedback').className='drag-feedback wrong-fb';
+    // highlight correct btn
+    document.querySelectorAll('.sym-btn').forEach(b=>{
+      if(b.dataset.sym===correct) b.classList.add('selected');
+    });
+  }
+  document.getElementById('d-next').style.display='inline-block';
+}
+function nextDrag(){ newDragQ(); }
+
+// ── SPEED ──
+let sTimer=null,sSeconds=60,sScore=0,sStreak=0,sRunning=false,sAnswered=false;
+let sCurrent={a:0,b:0};
+
+function genSpeed(){
+  sAnswered=false;
+  const a=randInt(1,20), b=randInt(1,20);
+  sCurrent={a,b};
+  document.getElementById('s-a').textContent=toAr(a);
+  document.getElementById('s-b').textContent=toAr(b);
+  document.getElementById('s-slot').textContent='?';
+  document.getElementById('s-feedback').textContent='';
+  document.getElementById('s-feedback').className='drag-feedback';
+  document.querySelectorAll('.speed-sym-btn').forEach(b=>{
+    b.className='speed-sym-btn';
+    b.disabled=false;
+  });
+}
+
+function startSpeed(){
+  if(sRunning) return;
+  sRunning=true; sSeconds=60; sScore=0; sStreak=0;
+  document.getElementById('s-score').textContent='٠';
+  document.getElementById('s-streak').textContent='٠';
+  document.getElementById('s-start-btn').style.display='none';
+  document.getElementById('speed-result').classList.remove('show');
+  document.getElementById('speed-game').style.display='block';
+  genSpeed();
+  sTimer=setInterval(()=>{
+    sSeconds--;
+    document.getElementById('s-timer').textContent=toAr(sSeconds);
+    if(sSeconds<=10) document.getElementById('s-timer').classList.add('danger');
+    document.getElementById('s-progress').style.width=(sSeconds/60*100)+'%';
+    if(sSeconds<=0){ clearInterval(sTimer); endSpeed(); }
+  },1000);
+}
+
+function checkSpeed(btn){
+  if(!sRunning||sAnswered) return;
+  sAnswered=true;
+  const correct=getSymbol(sCurrent.a,sCurrent.b);
+  document.getElementById('s-slot').textContent=btn.dataset.sym;
+  document.querySelectorAll('.speed-sym-btn').forEach(b=>b.disabled=true);
+  if(btn.dataset.sym===correct){
+    sScore+=10+(sStreak>=3?5:0); sStreak++;
+    document.getElementById('s-score').textContent=toAr(sScore);
+    document.getElementById('s-streak').textContent=toAr(sStreak);
+    btn.classList.add('correct-slot');
+    document.getElementById('s-feedback').textContent=sStreak>=3?`🔥 ${toAr(sStreak)}x تتالي!`:'✅ صحيح!';
+    document.getElementById('s-feedback').className='drag-feedback correct-fb';
+    launchConfettiCenter();
+    setTimeout(genSpeed,500);
+  } else {
+    sStreak=0;
+    document.getElementById('s-streak').textContent='٠';
+    btn.classList.add('wrong-slot');
+    document.getElementById('s-feedback').textContent=`❌ الصحيح: ${correct}`;
+    document.getElementById('s-feedback').className='drag-feedback wrong-fb';
+    document.querySelectorAll('.speed-sym-btn').forEach(b=>{
+      if(b.dataset.sym===correct) b.classList.add('correct-slot');
+    });
+    setTimeout(genSpeed,800);
+  }
+}
+
+function endSpeed(){
+  sRunning=false;
+  document.getElementById('speed-game').style.display='none';
+  document.getElementById('speed-result').classList.add('show');
+  document.getElementById('r-score').textContent=`${toAr(sScore)} نقطة`;
+  let emoji='🌟',msg='';
+  if(sScore>=150){ emoji='🏆'; msg='واو! أنت بطل المقارنة! نتيجة مذهلة!'; }
+  else if(sScore>=100){ emoji='🎉'; msg='رائع جداً! استمر وستصل إلى القمة!'; }
+  else if(sScore>=50){ emoji='👍'; msg='أحسنت! استمر في التدريب!'; }
+  else { emoji='💪'; msg='لا بأس! التدريب يجعلك أفضل. حاول مجدداً!'; }
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-msg').textContent=msg;
+  launchConfettiCenter();
+}
+
+function restartSpeed(){
+  document.getElementById('speed-result').classList.remove('show');
+  document.getElementById('speed-game').style.display='block';
+  document.getElementById('s-start-btn').style.display='inline-block';
+  document.getElementById('s-timer').textContent='٦٠';
+  document.getElementById('s-timer').classList.remove('danger');
+  document.getElementById('s-progress').style.width='100%';
+}
+
+// ── TABS ──
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='drag') newDragQ();
+  if(id==='learn') renderLearn();
+}
+
+// ── CONFETTI ──
+function launchConfettiCenter(){
+  const colors=['#a855f7','#ffd93d','#ff6b9d','#4ecdc4','#ff6b35','#06d6a0'];
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${30+Math.random()*40}%;top:${window.scrollY+80}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*.2}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+
+newDragQ();
+document.getElementById('topBar').style.width='10%';
+</script>
+</body>
+</html>

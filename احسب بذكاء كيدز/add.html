@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الجمع — إحسب بذكاء كيدز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+:root{
+  --primary:#4ecdc4;
+  --secondary:#38b2ac;
+  --accent:#ffd93d;
+  --pink:#ff6b9d;
+  --orange:#ff6b35;
+  --green:#06d6a0;
+  --purple:#a855f7;
+}
+
+body{
+  font-family:"Marhey", sans-serif;
+  background:#f0fffe;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── BG ── */
+.bg-blobs{
+  position:fixed; inset:0;
+  pointer-events:none; z-index:0; overflow:hidden;
+}
+.blob{
+  position:absolute; border-radius:50%;
+  filter:blur(70px); opacity:.13;
+  animation:blobFloat 9s ease-in-out infinite;
+}
+.blob-1{ width:420px;height:420px;background:var(--primary);top:-120px;right:-100px;animation-delay:0s; }
+.blob-2{ width:360px;height:360px;background:var(--accent);bottom:-80px;left:-60px;animation-delay:-3s; }
+.blob-3{ width:260px;height:260px;background:var(--pink);top:45%;left:35%;animation-delay:-5s; }
+.blob-4{ width:200px;height:200px;background:var(--green);bottom:25%;right:8%;animation-delay:-2s; }
+
+@keyframes blobFloat{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(18px,-18px) scale(1.05); }
+  66%{ transform:translate(-12px,12px) scale(.96); }
+}
+
+/* ── TOP BAR ── */
+.top-progress{
+  position:fixed; top:0; left:0; right:0;
+  height:4px; z-index:999;
+  background:rgba(78,205,196,.15);
+}
+.top-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  width:0%; transition:width .5s ease;
+}
+
+/* ── NAV ── */
+.topbar{
+  position:relative; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 28px;
+}
+.back-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  background:white; color:#555;
+  border:none; border-radius:14px;
+  padding:10px 18px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700;
+  cursor:pointer;
+  box-shadow:0 3px 14px rgba(0,0,0,.08);
+  text-decoration:none;
+  transition:transform .2s, box-shadow .2s;
+}
+.back-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.12); }
+
+.lesson-badge{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; font-size:.82rem; font-weight:700;
+  padding:7px 18px; border-radius:20px;
+  box-shadow:0 4px 14px rgba(78,205,196,.35);
+}
+
+/* ── HEADER ── */
+header{
+  position:relative; z-index:1;
+  text-align:center; padding:10px 20px 30px;
+}
+.header-emoji{
+  font-size:3.5rem; display:block; margin-bottom:12px;
+  animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+header h1{
+  font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:700; color:#1a1a2e;
+  animation:fadeDown .6s .1s ease both; margin-bottom:10px;
+}
+header p{
+  font-size:1.1rem; color:#888;
+  animation:fadeDown .6s .2s ease both;
+  max-width:420px; margin:0 auto; line-height:1.8;
+}
+
+/* ── TABS ── */
+.tabs-wrap{
+  position:relative; z-index:1;
+  display:flex; justify-content:center; gap:10px;
+  flex-wrap:wrap; padding:0 20px 28px;
+  animation:fadeUp .5s .3s ease both;
+}
+.tab-btn{
+  background:white; border:2px solid transparent;
+  border-radius:16px; padding:10px 22px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#bbb;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.tab-btn:hover{ transform:translateY(-3px); color:#888; }
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 20px rgba(78,205,196,.4);
+  transform:translateY(-3px);
+}
+
+/* ── MAIN ── */
+.main{
+  position:relative; z-index:1;
+  max-width:900px; margin:0 auto;
+  padding:0 24px 80px;
+}
+.section{ display:none; }
+.section.active{ display:block; animation:fadeUp .45s ease both; }
+
+.section-title{
+  text-align:center;
+  font-size:1.4rem; font-weight:700; color:#1a1a2e;
+  margin-bottom:28px;
+}
+.section-title span{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* ── LEARN SECTION ── */
+.learn-box{
+  background:white; border-radius:28px;
+  padding:36px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  margin-bottom:24px;
+  border-top:5px solid var(--primary);
+  animation:fadeUp .5s ease both;
+}
+
+.equation-display{
+  display:flex; align-items:center; justify-content:center;
+  gap:20px; flex-wrap:wrap;
+  margin:24px 0;
+}
+
+.eq-num{
+  font-size:clamp(3rem,10vw,5.5rem);
+  font-weight:700; line-height:1;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:bounceIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  min-width:80px;
+}
+.eq-op{
+  font-size:clamp(2.5rem,8vw,4.5rem);
+  font-weight:700; color:#ffd93d;
+  line-height:1; flex-shrink:0;
+  filter:drop-shadow(0 2px 6px rgba(255,217,61,.5));
+}
+.eq-result{
+  font-size:clamp(3rem,10vw,5.5rem);
+  font-weight:700; line-height:1;
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  min-width:80px;
+}
+.eq-equals{
+  font-size:clamp(2.5rem,8vw,4.5rem);
+  font-weight:700; color:#bbb; line-height:1; flex-shrink:0;
+}
+
+/* visual blocks */
+.visual-blocks{
+  display:flex; align-items:center; justify-content:center;
+  gap:16px; flex-wrap:wrap; margin:20px 0;
+}
+.block-group{
+  display:flex; flex-wrap:wrap;
+  gap:6px; justify-content:center;
+  max-width:200px;
+}
+.block{
+  width:28px; height:28px; border-radius:8px;
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 3px 8px rgba(0,0,0,.15);
+}
+.block-a{ background:linear-gradient(135deg,var(--primary),var(--secondary)); }
+.block-b{ background:linear-gradient(135deg,var(--orange),var(--pink)); }
+.plus-visual{
+  font-size:2rem; color:var(--accent); font-weight:800;
+  filter:drop-shadow(0 2px 4px rgba(255,217,61,.4));
+}
+.arrow-visual{
+  font-size:1.8rem; color:#ccc;
+}
+.block-result{ background:linear-gradient(135deg,var(--green),#34d399); }
+
+.learn-name{
+  font-size:1.3rem; color:#1a1a2e; font-weight:700; margin-bottom:6px;
+}
+.learn-desc{
+  font-size:1rem; color:#999; line-height:1.8;
+}
+
+.learn-nav{
+  display:flex; justify-content:center; gap:14px; margin-top:28px;
+}
+.nav-btn{
+  background:white; border:2px solid #f0f0f0;
+  border-radius:14px; padding:12px 24px;
+  font-family:"Marhey", sans-serif;
+  font-size:1rem; font-weight:700; color:#888;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-btn:hover{
+  transform:translateY(-3px) scale(1.04);
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 8px 20px rgba(78,205,196,.4);
+}
+.nav-btn.primary-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border-color:transparent;
+  box-shadow:0 6px 18px rgba(78,205,196,.4);
+}
+.nav-btn.primary-btn:hover{
+  box-shadow:0 10px 26px rgba(78,205,196,.5);
+}
+
+/* ── PRACTICE SECTION ── */
+.practice-card{
+  background:white; border-radius:28px;
+  padding:38px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--primary);
+}
+
+.prac-eq{
+  display:flex; align-items:center; justify-content:center;
+  gap:18px; flex-wrap:wrap; margin:20px 0 30px;
+}
+.prac-num{
+  font-size:clamp(3.5rem,12vw,6rem);
+  font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.prac-op{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:var(--accent);
+  filter:drop-shadow(0 2px 6px rgba(255,217,61,.4));
+}
+.prac-eq-text{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:#ddd;
+}
+.prac-box{
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:#ddd;
+  border-bottom:4px solid var(--primary);
+  min-width:80px; display:inline-block;
+  padding:0 10px;
+}
+
+.choices-grid{
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:14px; max-width:420px; margin:0 auto 20px;
+}
+.choice-btn{
+  background:#fafafa; border:2.5px solid #f0f0f0;
+  border-radius:18px; padding:18px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.6rem; font-weight:700; color:#555;
+  cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn:hover{
+  transform:translateY(-4px) scale(1.05);
+  border-color:#ddd; box-shadow:0 8px 22px rgba(0,0,0,.1);
+}
+.choice-btn.correct{
+  background:linear-gradient(135deg,#d4edda,#c3e6cb);
+  border-color:var(--green); color:#04a678;
+  animation:correctPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn.wrong{
+  background:linear-gradient(135deg,#fde8e8,#fcd5d5);
+  border-color:#ff4757; color:#ff4757;
+  animation:shake .4s ease;
+}
+
+.prac-feedback{
+  font-size:1.6rem; font-weight:700; min-height:40px;
+  margin:10px 0; transition:all .3s;
+}
+.prac-feedback.correct-fb{ color:var(--green); }
+.prac-feedback.wrong-fb{ color:#ff4757; }
+
+.score-row{
+  display:flex; justify-content:center; gap:16px; margin:20px 0;
+}
+.score-pill{
+  background:#fafafa; border:1.5px solid #f0f0f0;
+  border-radius:14px; padding:10px 22px; text-align:center;
+}
+.score-pill .sp-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.score-pill .sp-label{ font-size:.8rem; color:#bbb; font-weight:600; }
+
+.next-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 34px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(78,205,196,.4);
+  transition:transform .2s, box-shadow .2s;
+  display:none;
+}
+.next-btn:hover{ transform:translateY(-3px); box-shadow:0 10px 28px rgba(78,205,196,.5); }
+
+/* ── SPEED CHALLENGE ── */
+.speed-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; flex-wrap:wrap; gap:10px;
+}
+.timer-box{
+  background:white; border-radius:16px;
+  padding:12px 22px; text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  border-top:3px solid var(--primary);
+}
+.timer-num{
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.timer-label{ font-size:.75rem; color:#bbb; font-weight:600; }
+
+.timer-num.danger{
+  background:linear-gradient(135deg,#ff4757,var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:pulse .5s ease-in-out infinite;
+}
+
+.speed-card{
+  background:white; border-radius:28px;
+  padding:36px 28px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  border-top:5px solid var(--accent);
+}
+
+.speed-eq{
+  font-size:clamp(2.5rem,10vw,5rem);
+  font-weight:700; margin:20px 0;
+  color:#1a1a2e;
+  letter-spacing:.05em;
+}
+.speed-eq .s-op{ color:var(--accent); }
+.speed-eq .s-blank{
+  display:inline-block;
+  border-bottom:5px solid var(--primary);
+  min-width:70px; margin:0 8px;
+  color:transparent;
+}
+
+.speed-input{
+  font-size:2.5rem; font-weight:700;
+  text-align:center; color:#1a1a2e;
+  border:3px solid #f0f0f0; border-radius:18px;
+  padding:14px 20px; width:180px;
+  font-family:"Marhey", sans-serif;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  margin:16px auto; display:block;
+}
+.speed-input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px rgba(78,205,196,.2);
+}
+.speed-input.correct-input{
+  border-color:var(--green);
+  background:#f0fff9;
+  animation:correctPop .3s ease;
+}
+.speed-input.wrong-input{
+  border-color:#ff4757;
+  background:#fff5f5;
+  animation:shake .3s ease;
+}
+
+.speed-submit{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 36px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(78,205,196,.4);
+  transition:transform .2s, box-shadow .2s;
+  margin-top:8px;
+}
+.speed-submit:hover{ transform:translateY(-3px); box-shadow:0 10px 28px rgba(78,205,196,.5); }
+
+.progress-bar-bg{
+  background:#f0f0f0; border-radius:10px;
+  height:10px; overflow:hidden; margin:16px 0;
+}
+.progress-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  border-radius:10px; transition:width .4s ease;
+}
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:fixed; width:10px; height:10px;
+  border-radius:2px; pointer-events:none;
+  animation:confettiFall 1.2s ease-in forwards; z-index:9999;
+}
+@keyframes confettiFall{
+  0%{ opacity:1; transform:translateY(0) rotate(0deg); }
+  100%{ opacity:0; transform:translateY(200px) rotate(540deg); }
+}
+
+/* ── RESULT SCREEN ── */
+.result-screen{
+  background:white; border-radius:28px;
+  padding:50px 30px; text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+  display:none;
+  animation:fadeUp .5s ease both;
+}
+.result-screen.show{ display:block; }
+.result-emoji{ font-size:4rem; margin-bottom:16px; animation:bounceIn .6s ease both; }
+.result-title{ font-size:2rem; font-weight:700; color:#1a1a2e; margin-bottom:8px; }
+.result-score{
+  font-size:3.5rem; font-weight:700; margin:20px 0;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.result-msg{ font-size:1.1rem; color:#888; margin-bottom:28px; line-height:1.8; }
+.restart-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white; border:none; border-radius:16px;
+  padding:14px 36px;
+  font-family:"Marhey", sans-serif;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 20px rgba(78,205,196,.4);
+  transition:transform .2s;
+}
+.restart-btn:hover{ transform:translateY(-3px); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown{
+  from{ opacity:0; transform:translateY(-16px); }
+  to{   opacity:1; transform:translateY(0); }
+}
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(20px); }
+  to{   opacity:1; transform:translateY(0); }
+}
+@keyframes popIn{
+  from{ opacity:0; transform:scale(.7); }
+  to{   opacity:1; transform:scale(1); }
+}
+@keyframes bounceIn{
+  from{ opacity:0; transform:scale(.5) rotate(-10deg); }
+  to{   opacity:1; transform:scale(1) rotate(0); }
+}
+@keyframes correctPop{
+  0%{ transform:scale(1); } 50%{ transform:scale(1.1); } 100%{ transform:scale(1); }
+}
+@keyframes shake{
+  0%,100%{ transform:translateX(0); }
+  25%{ transform:translateX(-8px); }
+  75%{ transform:translateX(8px); }
+}
+@keyframes pulse{
+  0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); }
+}
+@keyframes wiggle{
+  0%,100%{ transform:rotate(0); }
+  25%{ transform:rotate(-10deg); }
+  75%{ transform:rotate(10deg); }
+}
+
+::-webkit-scrollbar{ width:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:#b8efec; border-radius:10px; }
+</style>
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill" id="topBar"></div></div>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+
+<!-- NAV -->
+<div class="topbar">
+  <a href="./explain.html" class="back-btn">← العودة</a>
+  <div class="lesson-badge">➕ الدرس ٢ — الجمع</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <span class="header-emoji">➕</span>
+  <h1>تعلّم الجمع</h1>
+  <p>اجمع الأرقام معاً وتعلّم بطريقة ممتعة ومليئة بالألوان!</p>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('learn', this)">📖 تعلّم</button>
+  <button class="tab-btn" onclick="switchTab('practice', this)">✏️ تدرّب</button>
+  <button class="tab-btn" onclick="switchTab('speed', this)">⚡ سباق السرعة</button>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ── LEARN ── -->
+  <section class="section active" id="sec-learn">
+    <div class="section-title">كيف نجمع؟ <span>🤔</span></div>
+
+    <div class="learn-box">
+      <div class="learn-name" id="l-name">١ + ١ = ٢</div>
+      <div class="learn-desc" id="l-desc">عندما نضع تفاحة مع تفاحة أخرى، نحصل على تفاحتين!</div>
+
+      <div class="equation-display">
+        <div class="eq-num" id="l-a">١</div>
+        <div class="eq-op">+</div>
+        <div class="eq-num" id="l-b">١</div>
+        <div class="eq-equals">=</div>
+        <div class="eq-result" id="l-res">٢</div>
+      </div>
+
+      <!-- Visual blocks -->
+      <div class="visual-blocks" id="l-blocks"></div>
+
+      <div style="margin-top:16px;font-size:1.4rem;" id="l-emojis"></div>
+    </div>
+
+    <div class="learn-nav">
+      <button class="nav-btn" onclick="learnChange(-1)">→ السابق</button>
+      <div style="background:white;border-radius:14px;padding:10px 22px;font-size:1rem;font-weight:700;color:#1a1a2e;box-shadow:0 3px 12px rgba(0,0,0,.08);display:flex;align-items:center;">
+        <span id="l-counter">١ / ١٠</span>
+      </div>
+      <button class="nav-btn primary-btn" onclick="learnChange(1)">التالي ←</button>
+    </div>
+  </section>
+
+  <!-- ── PRACTICE ── -->
+  <section class="section" id="sec-practice">
+    <div class="section-title">تدرّب الآن! <span>💪</span></div>
+
+    <div class="practice-card">
+      <div class="score-row">
+        <div class="score-pill"><div class="sp-num" id="p-correct">0</div><div class="sp-label">✅ صحيح</div></div>
+        <div class="score-pill"><div class="sp-num" id="p-wrong">0</div><div class="sp-label">❌ خطأ</div></div>
+        <div class="score-pill"><div class="sp-num" id="p-total">0</div><div class="sp-label">📊 المجموع</div></div>
+      </div>
+
+      <div class="prac-eq">
+        <span class="prac-num" id="p-a">٣</span>
+        <span class="prac-op">+</span>
+        <span class="prac-num" id="p-b">٤</span>
+        <span class="prac-eq-text">=</span>
+        <span class="prac-box" id="p-blank">?</span>
+      </div>
+
+      <div class="choices-grid" id="p-choices"></div>
+      <div class="prac-feedback" id="p-feedback"></div>
+      <button class="next-btn" id="p-next" onclick="nextPractice()">السؤال التالي ←</button>
+    </div>
+  </section>
+
+  <!-- ── SPEED ── -->
+  <section class="section" id="sec-speed">
+    <div class="section-title">سباق السرعة! <span>⚡</span></div>
+
+    <div id="speed-game">
+      <div class="speed-header">
+        <div class="timer-box">
+          <div class="timer-num" id="s-timer">60</div>
+          <div class="timer-label">⏱ ثانية</div>
+        </div>
+        <div class="score-row" style="margin:0;gap:12px;">
+          <div class="score-pill"><div class="sp-num" id="s-score">0</div><div class="sp-label">🏆 النقاط</div></div>
+          <div class="score-pill"><div class="sp-num" id="s-streak">0</div><div class="sp-label">🔥 تتالي</div></div>
+        </div>
+      </div>
+
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="s-progress" style="width:100%"></div>
+      </div>
+
+      <div class="speed-card">
+        <div class="speed-eq" id="s-eq">
+          <span id="s-a">٣</span>
+          <span class="s-op"> + </span>
+          <span id="s-b">٤</span>
+          <span> = </span>
+          <span class="s-blank" id="s-blank">?</span>
+        </div>
+
+        <input type="number" class="speed-input" id="s-input"
+          placeholder="؟" min="0" max="99"
+          onkeydown="if(event.key==='Enter') checkSpeed()">
+        <br>
+        <button class="speed-submit" onclick="checkSpeed()">✅ تأكيد</button>
+        <div class="prac-feedback" id="s-feedback" style="margin-top:14px;"></div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button class="nav-btn primary-btn" onclick="startSpeed()" id="s-start-btn">🚀 ابدأ السباق!</button>
+      </div>
+    </div>
+
+    <div class="result-screen" id="speed-result">
+      <div class="result-emoji" id="r-emoji">🏆</div>
+      <div class="result-title">انتهى الوقت!</div>
+      <div class="result-score" id="r-score">0 نقطة</div>
+      <div class="result-msg" id="r-msg">أحسنت! استمر في التدريب لتحصل على نتيجة أفضل.</div>
+      <button class="restart-btn" onclick="restartSpeed()">🔄 العب مجدداً</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── ARABIC NUMERALS ──
+const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+// ── LEARN DATA ──
+const lessons = [
+  {a:1,b:1,desc:'عندما نضع تفاحة واحدة مع تفاحة أخرى نحصل على تفاحتين!',emoji:'🍎'},
+  {a:2,b:1,desc:'عندنا كرتان ثم جاءت كرة أخرى — أصبح لدينا ٣ كرات!',emoji:'⚽'},
+  {a:2,b:2,desc:'مجموعتان من النجوم يصنعان ٤ نجوم لامعة!',emoji:'⭐'},
+  {a:3,b:2,desc:'ثلاثة قلوب وقلبان — هذا يعني خمسة قلوب جميلة!',emoji:'❤️'},
+  {a:4,b:2,desc:'أربع فراشات وفراشتان — ست فراشات ترفرف!',emoji:'🦋'},
+  {a:3,b:3,desc:'ثلاثة أصدقاء مع ثلاثة أصدقاء — ستة أصدقاء في الحفلة!',emoji:'🎈'},
+  {a:5,b:2,desc:'خمسة أسماك وسمكتان — سبعة أسماك في البحر!',emoji:'🐟'},
+  {a:4,b:4,desc:'أربع ورود وأربع ورود — ثمانية ورود جميلة!',emoji:'🌹'},
+  {a:5,b:4,desc:'خمسة نجوم وأربعة — تسعة نجوم في السماء!',emoji:'🌟'},
+  {a:5,b:5,desc:'خمسة أرانب وخمسة أرانب — عشرة أرانب مرحة!',emoji:'🐰'},
+];
+
+let lIndex = 0;
+function renderLearn(){
+  const d = lessons[lIndex];
+  const res = d.a + d.b;
+  document.getElementById('l-a').textContent   = toAr(d.a);
+  document.getElementById('l-b').textContent   = toAr(d.b);
+  document.getElementById('l-res').textContent = toAr(res);
+  document.getElementById('l-name').textContent = `${toAr(d.a)} + ${toAr(d.b)} = ${toAr(res)}`;
+  document.getElementById('l-desc').textContent = d.desc;
+  document.getElementById('l-counter').textContent = `${toAr(lIndex+1)} / ${toAr(lessons.length)}`;
+  document.getElementById('l-emojis').textContent = d.emoji.repeat(res);
+
+  // blocks
+  const bl = document.getElementById('l-blocks');
+  bl.innerHTML = `
+    <div class="block-group">${'<div class="block block-a"></div>'.repeat(d.a)}</div>
+    <div class="plus-visual">+</div>
+    <div class="block-group">${'<div class="block block-b"></div>'.repeat(d.b)}</div>
+    <div class="arrow-visual">→</div>
+    <div class="block-group">${'<div class="block block-result"></div>'.repeat(res)}</div>
+  `;
+  // stagger
+  bl.querySelectorAll('.block').forEach((b,i) => b.style.animationDelay = (i*.05)+'s');
+  document.getElementById('topBar').style.width = ((lIndex+1)/lessons.length*100)+'%';
+}
+function learnChange(dir){
+  lIndex = (lIndex + dir + lessons.length) % lessons.length;
+  renderLearn();
+}
+renderLearn();
+
+// ── PRACTICE ──
+let pCorrect=0, pWrong=0, pTotal=0, pAnswered=false;
+
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+function nextPractice(){
+  pAnswered=false;
+  document.getElementById('p-feedback').textContent='';
+  document.getElementById('p-feedback').className='prac-feedback';
+  document.getElementById('p-next').style.display='none';
+  document.querySelectorAll('.choice-btn').forEach(b=>b.className='choice-btn');
+
+  const a = randInt(1,9), b = randInt(1,9), res = a+b;
+  document.getElementById('p-a').textContent = toAr(a);
+  document.getElementById('p-b').textContent = toAr(b);
+  document.getElementById('p-blank').textContent = '?';
+  document.getElementById('p-blank').dataset.answer = res;
+
+  // choices
+  const wrong = new Set();
+  while(wrong.size < 3){
+    const w = res + randInt(-4,4);
+    if(w!==res && w>=0) wrong.add(w);
+  }
+  const choices = [...wrong, res].sort(()=>Math.random()-.5);
+  const gc = document.getElementById('p-choices');
+  gc.innerHTML='';
+  choices.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=toAr(c);
+    btn.onclick=()=>checkPractice(btn,c===res,res);
+    gc.appendChild(btn);
+  });
+}
+
+function checkPractice(btn,isCorrect,res){
+  if(pAnswered) return;
+  pAnswered=true; pTotal++;
+  document.getElementById('p-total').textContent=toAr(pTotal);
+  if(isCorrect){
+    pCorrect++;
+    document.getElementById('p-correct').textContent=toAr(pCorrect);
+    btn.classList.add('correct');
+    document.getElementById('p-feedback').textContent='🎉 ممتاز! إجابة صحيحة!';
+    document.getElementById('p-feedback').className='prac-feedback correct-fb';
+    document.getElementById('p-blank').textContent=toAr(res);
+    launchConfetti(btn);
+  } else {
+    pWrong++;
+    document.getElementById('p-wrong').textContent=toAr(pWrong);
+    btn.classList.add('wrong');
+    document.getElementById('p-feedback').textContent=`❌ الإجابة الصحيحة: ${toAr(res)}`;
+    document.getElementById('p-feedback').className='prac-feedback wrong-fb';
+    document.getElementById('p-blank').textContent=toAr(res);
+    document.querySelectorAll('.choice-btn').forEach(b=>{
+      if(parseInt(b.textContent.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)))==res) b.classList.add('correct');
+    });
+  }
+  document.getElementById('p-next').style.display='inline-block';
+}
+
+// ── SPEED ──
+let sTimer=null, sSeconds=60, sScore=0, sStreak=0, sRunning=false;
+let sCurrent={a:0,b:0,res:0};
+
+function genSpeed(){
+  const a=randInt(1,9), b=randInt(1,9);
+  sCurrent={a,b,res:a+b};
+  document.getElementById('s-a').textContent=toAr(a);
+  document.getElementById('s-b').textContent=toAr(b);
+  document.getElementById('s-input').value='';
+  document.getElementById('s-input').className='speed-input';
+  document.getElementById('s-feedback').textContent='';
+  document.getElementById('s-feedback').className='prac-feedback';
+  document.getElementById('s-input').focus();
+}
+
+function startSpeed(){
+  if(sRunning) return;
+  sRunning=true; sSeconds=60; sScore=0; sStreak=0;
+  document.getElementById('s-score').textContent='٠';
+  document.getElementById('s-streak').textContent='٠';
+  document.getElementById('s-start-btn').style.display='none';
+  document.getElementById('speed-result').classList.remove('show');
+  document.getElementById('speed-game').style.display='block';
+  genSpeed();
+  sTimer=setInterval(()=>{
+    sSeconds--;
+    document.getElementById('s-timer').textContent=toAr(sSeconds);
+    const timerEl=document.getElementById('s-timer');
+    if(sSeconds<=10) timerEl.classList.add('danger');
+    else timerEl.classList.remove('danger');
+    document.getElementById('s-progress').style.width=(sSeconds/60*100)+'%';
+    if(sSeconds<=0){ clearInterval(sTimer); endSpeed(); }
+  },1000);
+}
+
+function checkSpeed(){
+  if(!sRunning) return;
+  const val=parseInt(document.getElementById('s-input').value);
+  if(isNaN(val)) return;
+  const inp=document.getElementById('s-input');
+  if(val===sCurrent.res){
+    sScore+=10+(sStreak>=3?5:0); sStreak++;
+    document.getElementById('s-score').textContent=toAr(sScore);
+    document.getElementById('s-streak').textContent=toAr(sStreak);
+    inp.classList.add('correct-input');
+    document.getElementById('s-feedback').textContent=sStreak>=3?`🔥 ${toAr(sStreak)}x تتالي!`:'✅ صحيح!';
+    document.getElementById('s-feedback').className='prac-feedback correct-fb';
+    launchConfettiCenter();
+    setTimeout(genSpeed,400);
+  } else {
+    sStreak=0;
+    document.getElementById('s-streak').textContent='٠';
+    inp.classList.add('wrong-input');
+    document.getElementById('s-feedback').textContent=`❌ الإجابة: ${toAr(sCurrent.res)}`;
+    document.getElementById('s-feedback').className='prac-feedback wrong-fb';
+    setTimeout(()=>{ inp.classList.remove('wrong-input'); inp.value=''; inp.focus(); },600);
+  }
+}
+
+function endSpeed(){
+  sRunning=false;
+  document.getElementById('speed-game').style.display='none';
+  const rs=document.getElementById('speed-result');
+  rs.classList.add('show');
+  document.getElementById('r-score').textContent=`${toAr(sScore)} نقطة`;
+  let emoji='🌟', msg='';
+  if(sScore>=150){ emoji='🏆'; msg='واو! أنت بطل الجمع! نتيجة رائعة جداً!'; }
+  else if(sScore>=100){ emoji='🎉'; msg='رائع جداً! استمر وستصل إلى القمة!'; }
+  else if(sScore>=50){ emoji='👍'; msg='أحسنت! استمر في التدريب لتحسين نتيجتك!'; }
+  else { emoji='💪'; msg='لا بأس! التدريب يجعلك أفضل. حاول مجدداً!'; }
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-msg').textContent=msg;
+  launchConfettiCenter();
+}
+
+function restartSpeed(){
+  document.getElementById('speed-result').classList.remove('show');
+  document.getElementById('speed-game').style.display='block';
+  document.getElementById('s-start-btn').style.display='inline-block';
+  document.getElementById('s-timer').textContent='٦٠';
+  document.getElementById('s-timer').classList.remove('danger');
+  document.getElementById('s-progress').style.width='100%';
+}
+
+// ── TABS ──
+function switchTab(id, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='practice') nextPractice();
+}
+
+// ── CONFETTI ──
+function launchConfetti(el){
+  const rect=el.getBoundingClientRect();
+  const colors=['#4ecdc4','#ffd93d','#ff6b9d','#ff6b35','#a855f7','#06d6a0'];
+  for(let i=0;i<16;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${rect.left+Math.random()*rect.width}px;top:${rect.top}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*.3}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+function launchConfettiCenter(){
+  const colors=['#4ecdc4','#ffd93d','#ff6b9d','#ff6b35','#a855f7','#06d6a0'];
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${30+Math.random()*40}%;top:${window.scrollY+100}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*.2}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+
+// init
+nextPractice();
+document.getElementById('topBar').style.width='10%';
+</script>
+</body>
+</html>

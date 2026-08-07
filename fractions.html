@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>الكسور الاعتيادية - إحسب بذكاء</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Amiri', serif;
+      background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 50%, #9fa8da 100%);
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    nav {
+      background: linear-gradient(90deg, #283593, #3949ab, #283593);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+      direction: rtl;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: "Aref Ruqaa", serif;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-logo i {
+      font-size: 28px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(135deg, #3949ab, #283593);
+      color: white;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.3;
+    }
+
+    .hero h1 {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 42px;
+      margin-bottom: 15px;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.8;
+      position: relative;
+      opacity: 0.95;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      padding: 0 10px;
+    }
+
+    .calc-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #283593, #5c6bc0, #283593);
+    }
+
+    .calc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #e0e0e0;
+    }
+
+    .calc-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #283593, #5c6bc0);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(40, 53, 147, 0.3);
+    }
+
+    .calc-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 24px;
+      color: #283593;
+    }
+
+    .calc-desc {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      background: #e8eaf6;
+      border-radius: 10px;
+      border-right: 4px solid #5c6bc0;
+    }
+
+    .formula-box {
+      background: linear-gradient(135deg, #283593, #3949ab);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: "Aref Ruqaa", serif;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(40, 53, 147, 0.2);
+      position: relative;
+    }
+
+    .formula-box .formula-sub {
+      font-size: 14px;
+      margin-top: 8px;
+      opacity: 0.9;
+      font-family: 'Amiri', serif;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 16px;
+      font-family: 'Amiri', serif;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #5c6bc0;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.15);
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #283593, #5c6bc0);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      font-family: "Aref Ruqaa", serif;
+      font-weight: 700;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(40, 53, 147, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 53, 147, 0.4);
+    }
+
+    .calc-btn:active {
+      transform: translateY(0);
+    }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #e8eaf6, #c5cae9);
+      border-radius: 12px;
+      border: 1px solid #9fa8da;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result-box.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .final-result {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 22px;
+      color: #283593;
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .steps-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 18px;
+      color: #283593;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .steps-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .steps-list li {
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 8px;
+      border-right: 3px solid #5c6bc0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      transition: transform 0.2s ease;
+      animation: slideIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .steps-list li:nth-child(1) { animation-delay: 0.1s; }
+    .steps-list li:nth-child(2) { animation-delay: 0.2s; }
+    .steps-list li:nth-child(3) { animation-delay: 0.3s; }
+    .steps-list li:nth-child(4) { animation-delay: 0.4s; }
+    .steps-list li:nth-child(5) { animation-delay: 0.5s; }
+    .steps-list li:nth-child(6) { animation-delay: 0.6s; }
+    .steps-list li:nth-child(7) { animation-delay: 0.7s; }
+    .steps-list li:nth-child(8) { animation-delay: 0.8s; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .steps-list li:hover {
+      transform: translateX(-5px);
+      background: #e8eaf6;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #283593;
+      color: white;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: bold;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .fraction-display {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 5px;
+    }
+
+    .fraction-display .top {
+      border-bottom: 2px solid #333;
+      padding: 0 8px;
+      text-align: center;
+    }
+
+    .fraction-display .bottom {
+      padding: 0 8px;
+      text-align: center;
+    }
+
+    .fraction-visual {
+      width: 100%;
+      height: 40px;
+      background: #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 15px;
+      position: relative;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .fraction-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #283593, #5c6bc0);
+      border-radius: 8px;
+      transition: width 1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      width: 0%;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      margin-top: 40px;
+      color: #555;
+      font-size: 16px;
+    }
+
+    .footer i {
+      color: #e53935;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        width: 95%;
+      }
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <i class="ti ti-math"></i>
+      إحســـب بـذكـاء
+    </a>
+  </nav>
+
+  <div class="hero">
+    <h1>الكسور الاعتيادية</h1>
+    <p>الكسر الاعتيادي هو طريقة للتعبير عن جزء من الكل. اكتشف كيفية إجراء العمليات على الكسور بخطوات مفصلة وواضحة.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- جمع الكسور -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-plus"></i></div>
+        <div class="calc-title">جمع الكسور</div>
+      </div>
+      <div class="calc-desc">
+        لجمع كسرين، نوحد المقامات أولاً ثم نجمع البسطات. إذا كانت المقامات متساوية نجمع البسطات مباشرة.
+      </div>
+      <div class="formula-box">
+        أ/ب + ج/د = (أ×د + ج×ب) / (ب×د)
+        <div class="formula-sub">أدخل بسط ومقام كل كسر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>بسط الكسر الأول</label>
+          <input type="number" id="addNum1" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الأول</label>
+          <input type="number" id="addDen1" placeholder="1" min="1" step="any">
+        </div>
+        <div class="input-group">
+          <label>بسط الكسر الثاني</label>
+          <input type="number" id="addNum2" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الثاني</label>
+          <input type="number" id="addDen2" placeholder="1" min="1" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcAddFractions()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الجمع
+      </button>
+      <div class="result-box" id="addResultBox">
+        <div class="final-result" id="addResult"></div>
+        <div class="fraction-visual">
+          <div class="fraction-fill" id="addBar">0</div>
+        </div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="addSteps"></ul>
+      </div>
+    </div>
+
+    <!-- طرح الكسور -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-minus"></i></div>
+        <div class="calc-title">طرح الكسور</div>
+      </div>
+      <div class="calc-desc">
+        لطرح كسرين، نوحد المقامات أولاً ثم نطرح البسطات. إذا كانت المقامات متساوية نطرح البسطات مباشرة.
+      </div>
+      <div class="formula-box">
+        أ/ب - ج/د = (أ×د - ج×ب) / (ب×د)
+        <div class="formula-sub">أدخل بسط ومقام كل كسر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>بسط الكسر الأول</label>
+          <input type="number" id="subNum1" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الأول</label>
+          <input type="number" id="subDen1" placeholder="1" min="1" step="any">
+        </div>
+        <div class="input-group">
+          <label>بسط الكسر الثاني</label>
+          <input type="number" id="subNum2" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الثاني</label>
+          <input type="number" id="subDen2" placeholder="1" min="1" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcSubFractions()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الطرح
+      </button>
+      <div class="result-box" id="subResultBox">
+        <div class="final-result" id="subResult"></div>
+        <div class="fraction-visual">
+          <div class="fraction-fill" id="subBar">0</div>
+        </div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="subSteps"></ul>
+      </div>
+    </div>
+
+    <!-- ضرب الكسور -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-x"></i></div>
+        <div class="calc-title">ضرب الكسور</div>
+      </div>
+      <div class="calc-desc">
+        لضرب كسرين، نضرب البسط في البسط والمقام في المقام. يمكن تبسيط الناتج إذا أمكن.
+      </div>
+      <div class="formula-box">
+        أ/ب × ج/د = (أ×ج) / (ب×د)
+        <div class="formula-sub">أدخل بسط ومقام كل كسر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>بسط الكسر الأول</label>
+          <input type="number" id="mulNum1" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الأول</label>
+          <input type="number" id="mulDen1" placeholder="1" min="1" step="any">
+        </div>
+        <div class="input-group">
+          <label>بسط الكسر الثاني</label>
+          <input type="number" id="mulNum2" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الثاني</label>
+          <input type="number" id="mulDen2" placeholder="1" min="1" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcMulFractions()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب الضرب
+      </button>
+      <div class="result-box" id="mulResultBox">
+        <div class="final-result" id="mulResult"></div>
+        <div class="fraction-visual">
+          <div class="fraction-fill" id="mulBar">0</div>
+        </div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="mulSteps"></ul>
+      </div>
+    </div>
+
+    <!-- قسمة الكسور -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-divide"></i></div>
+        <div class="calc-title">قسمة الكسور</div>
+      </div>
+      <div class="calc-desc">
+        لقسمة كسرين، نقلب الكسر الثاني (نستبدل البسط بالمقام والمقام بالبسط) ثم نضرب الكسرين.
+      </div>
+      <div class="formula-box">
+        أ/ب ÷ ج/د = أ/ب × د/ج = (أ×د) / (ب×ج)
+        <div class="formula-sub">أدخل بسط ومقام كل كسر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>بسط الكسر الأول</label>
+          <input type="number" id="divNum1" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الأول</label>
+          <input type="number" id="divDen1" placeholder="1" min="1" step="any">
+        </div>
+        <div class="input-group">
+          <label>بسط الكسر الثاني</label>
+          <input type="number" id="divNum2" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>مقام الكسر الثاني</label>
+          <input type="number" id="divDen2" placeholder="1" min="1" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcDivFractions()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب القسمة
+      </button>
+      <div class="result-box" id="divResultBox">
+        <div class="final-result" id="divResult"></div>
+        <div class="fraction-visual">
+          <div class="fraction-fill" id="divBar">0</div>
+        </div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="divSteps"></ul>
+      </div>
+    </div>
+
+    <!-- تبسيط الكسر -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-arrows-minimize"></i></div>
+        <div class="calc-title">تبسيط الكسر</div>
+      </div>
+      <div class="calc-desc">
+        لتبسيط كسر، نوجد القاسم المشترك الأكبر (GCD) للبسط والمقام، ثم نقسم البسط والمقام على هذا القاسم.
+      </div>
+      <div class="formula-box">
+        أ/ب = (أ÷ق.م.أ) / (ب÷ق.م.أ)
+        <div class="formula-sub">ق.م.أ = القاسم المشترك الأكبر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>البسط</label>
+          <input type="number" id="simpNum" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>المقام</label>
+          <input type="number" id="simpDen" placeholder="1" min="1" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcSimplify()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> بسّط الكسر
+      </button>
+      <div class="result-box" id="simpResultBox">
+        <div class="final-result" id="simpResult"></div>
+        <div class="fraction-visual">
+          <div class="fraction-fill" id="simpBar">0</div>
+        </div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="simpSteps"></ul>
+      </div>
+    </div>
+
+    <!-- تحويل الكسر لعدد عشري -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-transfer"></i></div>
+        <div class="calc-title">تحويل الكسر لعدد عشري</div>
+      </div>
+      <div class="calc-desc">
+        لتحويل كسر لعدد عشري، نقسم البسط على المقام. الناتج هو القيمة العشرية للكسر.
+      </div>
+      <div class="formula-box">
+        أ/ب = أ ÷ ب
+        <div class="formula-sub">أدخل البسط والمقام</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>البسط</label>
+          <input type="number" id="decNum" placeholder="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>المقام</label>
+          <input type="number" id="decDen" placeholder="1" min="1" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcToDecimal()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> حوّل لعدد عشري
+      </button>
+      <div class="result-box" id="decResultBox">
+        <div class="final-result" id="decResult"></div>
+        <div class="fraction-visual">
+          <div class="fraction-fill" id="decBar">0</div>
+        </div>
+        <div class="steps-title" style="margin-top:15px;"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="decSteps"></ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <i class="ti ti-heart"></i> صُمم بعناية لمساعدتك في فهم الرياضيات
+  </div>
+
+<script>
+
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b !== 0) {
+    let temp = b;
+    b = a % b;
+    a = temp;
+  }
+  return a;
+}
+
+function showResult(boxId, resultId, stepsId, resultText, steps, barId, barValue) {
+  const box = document.getElementById(boxId);
+  const result = document.getElementById(resultId);
+  const stepsList = document.getElementById(stepsId);
+
+  result.innerHTML = resultText;
+  stepsList.innerHTML = '';
+
+  steps.forEach((step, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="step-num">' + (index + 1) + '</span>' + step;
+    stepsList.appendChild(li);
+  });
+
+  box.classList.add('show');
+
+  // Animate fraction bar if provided
+  if (barId && barValue !== undefined) {
+    const bar = document.getElementById(barId);
+    bar.style.width = '0%';
+    bar.textContent = '0';
+    setTimeout(() => {
+      let pct = Math.min(Math.abs(barValue) * 100, 100);
+      bar.style.width = pct + '%';
+      bar.textContent = barValue.toFixed(3);
+    }, 100);
+  }
+
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function formatFraction(num, den) {
+  return '<span class="fraction-display"><span class="top">' + num + '</span><span class="bottom">' + den + '</span></span>';
+}
+
+function calcAddFractions() {
+  let n1 = Number(document.getElementById("addNum1").value);
+  let d1 = Number(document.getElementById("addDen1").value);
+  let n2 = Number(document.getElementById("addNum2").value);
+  let d2 = Number(document.getElementById("addDen2").value);
+
+  if (d1 === 0 || d2 === 0) {
+    alert("المقام لا يمكن أن يكون صفراً");
+    return;
+  }
+
+  let commonDen = d1 * d2;
+  let newNum1 = n1 * d2;
+  let newNum2 = n2 * d1;
+  let sumNum = newNum1 + newNum2;
+  let g = gcd(sumNum, commonDen);
+  let simpNum = sumNum / g;
+  let simpDen = commonDen / g;
+  let decimal = sumNum / commonDen;
+
+  let steps = [
+    'المعطيات: ' + formatFraction(n1, d1) + ' + ' + formatFraction(n2, d2),
+    'نعوض في القانون: نضرب البسط الأول في مقام الثاني والبسط الثاني في مقام الأول',
+    'نوحد المقامات: المقام المشترك = ' + d1 + ' × ' + d2 + ' = ' + commonDen,
+    'البسط الجديد للكسر الأول: ' + n1 + ' × ' + d2 + ' = ' + newNum1,
+    'البسط الجديد للكسر الثاني: ' + n2 + ' × ' + d1 + ' = ' + newNum2,
+    'نجمع البسطات: ' + newNum1 + ' + ' + newNum2 + ' = ' + sumNum,
+    'الناتج قبل التبسيط: ' + formatFraction(sumNum, commonDen),
+    'نبسط بقسمة البسط والمقام على ' + g + ': ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4)
+  ];
+
+  showResult('addResultBox', 'addResult', 'addSteps', 
+    'الناتج = ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4), steps, 'addBar', decimal);
+}
+
+function calcSubFractions() {
+  let n1 = Number(document.getElementById("subNum1").value);
+  let d1 = Number(document.getElementById("subDen1").value);
+  let n2 = Number(document.getElementById("subNum2").value);
+  let d2 = Number(document.getElementById("subDen2").value);
+
+  if (d1 === 0 || d2 === 0) {
+    alert("المقام لا يمكن أن يكون صفراً");
+    return;
+  }
+
+  let commonDen = d1 * d2;
+  let newNum1 = n1 * d2;
+  let newNum2 = n2 * d1;
+  let diffNum = newNum1 - newNum2;
+  let g = gcd(diffNum, commonDen);
+  let simpNum = diffNum / g;
+  let simpDen = commonDen / g;
+  let decimal = diffNum / commonDen;
+
+  let steps = [
+    'المعطيات: ' + formatFraction(n1, d1) + ' - ' + formatFraction(n2, d2),
+    'نعوض في القانون: نضرب البسط الأول في مقام الثاني والبسط الثاني في مقام الأول',
+    'نوحد المقامات: المقام المشترك = ' + d1 + ' × ' + d2 + ' = ' + commonDen,
+    'البسط الجديد للكسر الأول: ' + n1 + ' × ' + d2 + ' = ' + newNum1,
+    'البسط الجديد للكسر الثاني: ' + n2 + ' × ' + d1 + ' = ' + newNum2,
+    'نطرح البسطات: ' + newNum1 + ' - ' + newNum2 + ' = ' + diffNum,
+    'الناتج قبل التبسيط: ' + formatFraction(diffNum, commonDen),
+    'نبسط بقسمة البسط والمقام على ' + g + ': ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4)
+  ];
+
+  showResult('subResultBox', 'subResult', 'subSteps', 
+    'الناتج = ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4), steps, 'subBar', decimal);
+}
+
+function calcMulFractions() {
+  let n1 = Number(document.getElementById("mulNum1").value);
+  let d1 = Number(document.getElementById("mulDen1").value);
+  let n2 = Number(document.getElementById("mulNum2").value);
+  let d2 = Number(document.getElementById("mulDen2").value);
+
+  if (d1 === 0 || d2 === 0) {
+    alert("المقام لا يمكن أن يكون صفراً");
+    return;
+  }
+
+  let prodNum = n1 * n2;
+  let prodDen = d1 * d2;
+  let g = gcd(prodNum, prodDen);
+  let simpNum = prodNum / g;
+  let simpDen = prodDen / g;
+  let decimal = prodNum / prodDen;
+
+  let steps = [
+    'المعطيات: ' + formatFraction(n1, d1) + ' × ' + formatFraction(n2, d2),
+    'نعوض في القانون: نضرب البسط في البسط والمقام في المقام',
+    'بسط الناتج = ' + n1 + ' × ' + n2 + ' = ' + prodNum,
+    'مقام الناتج = ' + d1 + ' × ' + d2 + ' = ' + prodDen,
+    'الناتج قبل التبسيط: ' + formatFraction(prodNum, prodDen),
+    'نبسط بقسمة البسط والمقام على ' + g + ': ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4)
+  ];
+
+  showResult('mulResultBox', 'mulResult', 'mulSteps', 
+    'الناتج = ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4), steps, 'mulBar', decimal);
+}
+
+function calcDivFractions() {
+  let n1 = Number(document.getElementById("divNum1").value);
+  let d1 = Number(document.getElementById("divDen1").value);
+  let n2 = Number(document.getElementById("divNum2").value);
+  let d2 = Number(document.getElementById("divDen2").value);
+
+  if (d1 === 0 || d2 === 0 || n2 === 0) {
+    alert("المقام والبسط الثاني لا يمكن أن يكونا صفراً");
+    return;
+  }
+
+  let flippedNum = d2;
+  let flippedDen = n2;
+  let prodNum = n1 * flippedNum;
+  let prodDen = d1 * flippedDen;
+  let g = gcd(prodNum, prodDen);
+  let simpNum = prodNum / g;
+  let simpDen = prodDen / g;
+  let decimal = prodNum / prodDen;
+
+  let steps = [
+    'المعطيات: ' + formatFraction(n1, d1) + ' ÷ ' + formatFraction(n2, d2),
+    'نعوض في القانون: نقلب الكسر الثاني ونضرب',
+    'الكسر الثاني بعد القلب: ' + formatFraction(flippedNum, flippedDen),
+    'نضرب البسط في البسط: ' + n1 + ' × ' + flippedNum + ' = ' + prodNum,
+    'نضرب المقام في المقام: ' + d1 + ' × ' + flippedDen + ' = ' + prodDen,
+    'الناتج قبل التبسيط: ' + formatFraction(prodNum, prodDen),
+    'نبسط بقسمة البسط والمقام على ' + g + ': ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4)
+  ];
+
+  showResult('divResultBox', 'divResult', 'divSteps', 
+    'الناتج = ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4), steps, 'divBar', decimal);
+}
+
+function calcSimplify() {
+  let num = Number(document.getElementById("simpNum").value);
+  let den = Number(document.getElementById("simpDen").value);
+
+  if (den === 0) {
+    alert("المقام لا يمكن أن يكون صفراً");
+    return;
+  }
+
+  let g = gcd(num, den);
+  let simpNum = num / g;
+  let simpDen = den / g;
+  let decimal = num / den;
+
+  let steps = [
+    'المعطيات: ' + formatFraction(num, den),
+    'نعوض في القانون: نقسم البسط والمقام على القاسم المشترك الأكبر',
+    'نحسب القاسم المشترك الأكبر (GCD) لـ ' + num + ' و ' + den + ' = ' + g,
+    'نقسم البسط على ' + g + ': ' + num + ' ÷ ' + g + ' = ' + simpNum,
+    'نقسم المقام على ' + g + ': ' + den + ' ÷ ' + g + ' = ' + simpDen,
+    'الكسر المبسط: ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4)
+  ];
+
+  showResult('simpResultBox', 'simpResult', 'simpSteps', 
+    'الكسر المبسط = ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4), steps, 'simpBar', decimal);
+}
+
+function calcToDecimal() {
+  let num = Number(document.getElementById("decNum").value);
+  let den = Number(document.getElementById("decDen").value);
+
+  if (den === 0) {
+    alert("المقام لا يمكن أن يكون صفراً");
+    return;
+  }
+
+  let decimal = num / den;
+  let g = gcd(num, den);
+  let simpNum = num / g;
+  let simpDen = den / g;
+
+  let steps = [
+    'المعطيات: ' + formatFraction(num, den),
+    'نعوض في القانون: نقسم البسط على المقام',
+    num + ' ÷ ' + den + ' = ' + decimal.toFixed(6),
+    'الكسر المبسط: ' + formatFraction(simpNum, simpDen) + ' = ' + decimal.toFixed(4)
+  ];
+
+  showResult('decResultBox', 'decResult', 'decSteps', 
+    'العدد العشري = ' + decimal.toFixed(6), steps, 'decBar', decimal);
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const active = document.activeElement;
+    if (active && active.tagName === 'INPUT') {
+      const card = active.closest('.calc-card');
+      if (card) {
+        const btn = card.querySelector('.calc-btn');
+        if (btn) btn.click();
+      }
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>

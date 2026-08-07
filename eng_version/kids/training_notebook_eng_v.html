@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كراسة الحل — إحسب بذكاء كيدز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════
+   SITE SHELL
+═══════════════════════════════ */
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --orange:#ff6b35; --pink:#ff6b9d; --blue:#4ecdc4;
+  --yellow:#ffd93d; --purple:#a855f7; --green:#06d6a0;
+  --teal:#0ea5e9; --coral:#f43f5e; --lime:#84cc16;
+}
+body{
+  font-family:"Marhey",sans-serif;
+  background:#fff9f0; min-height:100vh; overflow-x:hidden;
+  direction:rtl;
+  text-align:right;
+}
+
+.bg-blobs{ position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden; }
+.blob{ position:absolute;border-radius:50%;filter:blur(70px);opacity:.12;animation:blobFloat 9s ease-in-out infinite; }
+.blob-1{ width:420px;height:420px;background:var(--orange);top:-110px;right:-90px;animation-delay:0s; }
+.blob-2{ width:350px;height:350px;background:var(--pink);bottom:-80px;left:-70px;animation-delay:-3s; }
+.blob-3{ width:260px;height:260px;background:var(--blue);top:40%;left:38%;animation-delay:-5s; }
+.blob-4{ width:210px;height:210px;background:var(--yellow);bottom:22%;right:7%;animation-delay:-2s; }
+@keyframes blobFloat{ 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(18px,-18px) scale(1.05)} 66%{transform:translate(-12px,12px) scale(.96)} }
+
+.top-progress{ position:fixed;top:0;left:0;right:0;height:4px;z-index:999;background:rgba(255,107,53,.12); }
+.top-progress-fill{ height:100%;background:linear-gradient(90deg,var(--orange),var(--pink));width:100%;transition:width .5s; }
+
+/* ── NAV ── */
+.topbar{ position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:20px 28px; }
+.back-btn{ display:inline-flex;align-items:center;gap:8px;background:white;color:#555;border:none;border-radius:14px;padding:10px 18px;font-family:"Marhey",sans-serif;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.08);text-decoration:none;transition:transform .2s,box-shadow .2s; }
+.back-btn:hover{ transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.13); }
+.lesson-badge{ background:linear-gradient(135deg,var(--orange),var(--pink));color:white;font-size:.82rem;font-weight:700;padding:7px 18px;border-radius:20px;box-shadow:0 4px 14px rgba(255,107,53,.3); }
+
+/* ── HEADER ── */
+header{ position:relative;z-index:1;text-align:center;padding:10px 20px 30px; }
+.header-emoji{ font-size:3.5rem;display:block;margin-bottom:12px;animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) both; }
+header h1{ font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:#1a1a2e;animation:fadeDown .5s .1s ease both;margin-bottom:10px; }
+header p{ font-size:1.1rem;color:#888;animation:fadeDown .5s .2s ease both;max-width:440px;margin:0 auto;line-height:1.8; }
+
+/* ── CONTROLS ── */
+.controls-wrap{ position:relative;z-index:1;max-width:900px;margin:0 auto 24px;padding:0 24px;animation:fadeUp .5s .3s ease both; }
+.controls-box{ background:white;border-radius:24px;padding:24px 28px;box-shadow:0 6px 24px rgba(0,0,0,.07);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between; }
+
+.ctrl-group{ display:flex;flex-direction:column;gap:6px;min-width:160px; }
+.ctrl-label{ font-size:.8rem;font-weight:700;color:#bbb;letter-spacing:.08em; }
+.ctrl-select{
+  border:2px solid #f0f0f0;border-radius:12px;padding:10px 14px;
+  font-family:"Marhey",sans-serif;font-size:.95rem;font-weight:700;color:#444;
+  background:white;cursor:pointer;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23bbb' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+  padding-left:14px;
+  direction:rtl;
+  text-align:right;
+}
+.ctrl-select:focus{ border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,53,.15); }
+
+.generate-btn{
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  color:white;border:none;border-radius:16px;padding:13px 28px;
+  font-family:"Marhey",sans-serif;font-size:1rem;font-weight:700;
+  cursor:pointer;box-shadow:0 6px 18px rgba(255,107,53,.35);
+  transition:transform .2s,box-shadow .2s;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.generate-btn:hover{ transform:translateY(-3px);box-shadow:0 10px 26px rgba(255,107,53,.45); }
+
+/* ── MAIN LAYOUT ── */
+.main-layout{ position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start; }
+@media(max-width:900px){ .main-layout{ grid-template-columns:1fr; } }
+
+/* ── PREVIEW PANE ── */
+.preview-pane{ background:white;border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,.1);overflow:hidden; }
+.preview-header{ padding:16px 22px;background:linear-gradient(135deg,#fafafa,white);border-bottom:2px solid #f5f5f5;display:flex;align-items:center;justify-content:space-between; }
+.preview-title{ font-size:.95rem;font-weight:700;color:#555;display:flex;align-items:center;gap:8px; }
+.preview-title::before{ content:'👁';font-size:1rem; }
+.page-indicator{ font-size:.8rem;color:#bbb;font-weight:600; }
+
+.preview-scroll{ height:700px;overflow-y:auto;padding:24px;background:#e8e8e8;display:flex;flex-direction:column;gap:20px; }
+.preview-scroll::-webkit-scrollbar{ width:5px; }
+.preview-scroll::-webkit-scrollbar-thumb{ background:#ccc;border-radius:10px; }
+
+/* ── WORKBOOK PAGE (A4 ratio) ── */
+.wb-page{
+  width:100%;
+  aspect-ratio:210/297;
+  background:white;
+  border-radius:8px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  padding:32px 28px;
+  position:relative;
+  overflow:hidden;
+  flex-shrink:0;
+  font-family:"Marhey",sans-serif;
+  animation:popIn .4s ease both;
+  direction:rtl;
+  text-align:right;
+}
+
+/* page decorations */
+.wb-page::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--pg-color, #ff6b35),var(--pg-color2, #ff6b9d));
+}
+
+.wb-page-header{ display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:2px dashed #f0f0f0; direction:rtl; }
+.wb-page-logo{ font-size:1rem;font-weight:700;color:#1a1a2e; }
+.wb-page-logo span{ background:linear-gradient(135deg,var(--orange),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.wb-page-meta{ text-align:left;font-size:.7rem;color:#ccc;font-weight:600; }
+.wb-page-num{ font-size:.75rem;font-weight:700;color:#ddd;position:absolute;bottom:12px;left:50%;transform:translateX(-50%); }
+
+.wb-section-title{
+  font-size:.8rem;font-weight:700;letter-spacing:.1em;color:white;
+  background:var(--pg-color,#ff6b35);
+  padding:5px 14px;border-radius:20px;
+  display:inline-block;margin-bottom:14px;
+}
+
+/* exercise layouts */
+.ex-grid{ display:grid;gap:10px; }
+.ex-grid-2{ grid-template-columns:1fr 1fr; }
+.ex-grid-3{ grid-template-columns:1fr 1fr 1fr; }
+.ex-grid-4{ grid-template-columns:1fr 1fr 1fr 1fr; }
+
+.ex-item{
+  border:1.5px solid #f0f0f0;border-radius:10px;
+  padding:10px 14px;
+  display:flex;align-items:center;gap:8px;
+  font-size:1.1rem;font-weight:700;color:#333;
+  direction:rtl;
+}
+.ex-blank{
+  display:inline-block;min-width:38px;height:26px;
+  border-bottom:2.5px solid #ddd;
+  text-align:center;margin:0 4px;
+}
+.ex-item-num{ font-size:.7rem;color:#ccc;font-weight:600;min-width:16px; }
+
+/* number tracing */
+.trace-grid{ display:grid;grid-template-columns:repeat(5,1fr);gap:10px; }
+.trace-box{
+  border:1.5px solid #f0f0f0;border-radius:10px;
+  padding:8px 4px;text-align:center;
+}
+.trace-big{ font-size:2.2rem;font-weight:700;color:#f0f0f0;display:block;line-height:1; }
+.trace-name{ font-size:.65rem;color:#ccc;margin-top:4px; }
+.trace-lines{ display:flex;flex-direction:column;gap:5px;margin-top:8px; }
+.trace-line{ height:1.5px;background:#f5f5f5;border-radius:2px; }
+
+/* comparison */
+.cmp-item{ display:flex;align-items:center;justify-content:center;gap:10px;font-size:1.3rem;font-weight:700;color:#333; }
+.cmp-blank{ display:inline-block;width:34px;height:34px;border:2px solid #ddd;border-radius:8px;text-align:center;line-height:30px; }
+
+/* color-coded accents per type */
+.type-numbers{ --pg-color:#ff6b35;--pg-color2:#ffd93d; }
+.type-add{     --pg-color:#4ecdc4;--pg-color2:#06d6a0; }
+.type-sub{     --pg-color:#ff6b9d;--pg-color2:#a855f7; }
+.type-cmp{     --pg-color:#a855f7;--pg-color2:#4ecdc4; }
+.type-mixed{   --pg-color:#ff6b35;--pg-color2:#ff6b9d; }
+.type-cover{   --pg-color:#ff6b35;--pg-color2:#ff6b9d; }
+.type-2d{      --pg-color:#0ea5e9;--pg-color2:#84cc16; }
+.type-3d{      --pg-color:#f43f5e;--pg-color2:#a855f7; }
+
+/* cover page */
+.cover-page{ display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center; }
+.cover-emoji{ font-size:3.5rem;margin-bottom:16px; }
+.cover-title{ font-size:1.6rem;font-weight:700;color:#1a1a2e;margin-bottom:8px;line-height:1.3; }
+.cover-sub{ font-size:.9rem;color:#888;margin-bottom:28px;line-height:1.8; }
+.cover-name-line{ border-bottom:2px solid #f0f0f0;width:200px;height:32px;margin:0 auto 10px; }
+.cover-label{ font-size:.75rem;color:#bbb;font-weight:700; }
+.cover-blobs{ position:absolute;inset:0;overflow:hidden;border-radius:8px;pointer-events:none; }
+.cover-blob{ position:absolute;border-radius:50%;opacity:.08; }
+.cover-blob-1{ width:180px;height:180px;background:var(--orange);top:-60px;right:-40px; }
+.cover-blob-2{ width:160px;height:160px;background:var(--blue);bottom:-50px;left:-40px; }
+.cover-blob-3{ width:120px;height:120px;background:var(--yellow);top:40%;left:-30px; }
+
+/* stars row */
+.star-row{ display:flex;gap:6px;justify-content:center;margin-top:20px; }
+.star-box{ width:36px;height:36px;border:2px solid #f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem; }
+
+/* ── 2D SHAPES ── */
+.shape-2d-grid{ display:grid;grid-template-columns:repeat(4,1fr);gap:14px; }
+.shape-2d-card{
+  border:2px solid #f0f0f0;border-radius:14px;padding:14px 10px;text-align:center;
+  transition:transform .2s,border-color .2s;
+}
+.shape-2d-card:hover{ transform:translateY(-3px);border-color:var(--pg-color); }
+.shape-2d-icon{ font-size:2.4rem;margin-bottom:8px;display:block; }
+.shape-2d-name{ font-size:.75rem;font-weight:700;color:#555; }
+.shape-2d-lines{ display:flex;flex-direction:column;gap:4px;margin-top:10px; }
+.shape-2d-line{ height:2px;background:#f0f0f0;border-radius:2px; }
+
+/* 2D exercise */
+.shape-ex-grid{ display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.shape-ex-item{
+  border:2px solid #f0f0f0;border-radius:14px;padding:16px;
+  display:flex;align-items:center;gap:14px;
+  direction:rtl;
+}
+.shape-ex-visual{ font-size:2.8rem;min-width:60px;text-align:center; }
+.shape-ex-info{ flex:1; }
+.shape-ex-q{ font-size:.85rem;font-weight:700;color:#555;margin-bottom:8px; direction:rtl; }
+.shape-ex-blank{ display:inline-block;min-width:80px;height:28px;border-bottom:2.5px solid #ddd; }
+
+/* ── 3D SHAPES ── */
+.shape-3d-grid{ display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+.shape-3d-card{
+  border:2px solid #f0f0f0;border-radius:14px;padding:16px 12px;text-align:center;
+  transition:transform .2s,border-color .2s;
+}
+.shape-3d-card:hover{ transform:translateY(-3px);border-color:var(--pg-color); }
+.shape-3d-icon{ font-size:3rem;margin-bottom:10px;display:block; }
+.shape-3d-name{ font-size:.8rem;font-weight:700;color:#555;margin-bottom:4px; }
+.shape-3d-faces{ font-size:.65rem;color:#bbb; }
+
+/* 3D exercise */
+.shape-3d-ex-grid{ display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.shape-3d-ex-item{
+  border:2px solid #f0f0f0;border-radius:14px;padding:16px;
+  display:flex;align-items:center;gap:14px;
+  direction:rtl;
+}
+.shape-3d-ex-visual{ font-size:2.8rem;min-width:60px;text-align:center; }
+.shape-3d-ex-info{ flex:1; }
+.shape-3d-ex-q{ font-size:.85rem;font-weight:700;color:#555;margin-bottom:8px; direction:rtl; }
+.shape-3d-ex-blank{ display:inline-block;min-width:60px;height:28px;border-bottom:2.5px solid #ddd; }
+
+/* match exercise */
+.match-grid{ display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.match-item{
+  border:2px dashed #e0e0e0;border-radius:12px;padding:12px;
+  display:flex;align-items:center;gap:10px;font-size:1rem;
+}
+.match-num{ background:var(--pg-color);color:white;font-size:.7rem;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center; }
+.match-arrow{ color:#ccc;font-size:1.2rem;font-weight:700; }
+
+/* ── SIDEBAR ── */
+.sidebar{ display:flex;flex-direction:column;gap:16px; }
+
+.side-card{ background:white;border-radius:22px;padding:22px;box-shadow:0 6px 22px rgba(0,0,0,.07);animation:fadeUp .5s ease both; }
+.side-card-title{ font-size:.9rem;font-weight:700;color:#1a1a2e;margin-bottom:14px;display:flex;align-items:center;gap:8px; }
+
+/* print btn */
+.print-btn{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  color:white;border:none;border-radius:18px;
+  font-family:"Marhey",sans-serif;font-size:1.1rem;font-weight:700;
+  cursor:pointer;box-shadow:0 8px 22px rgba(255,107,53,.4);
+  transition:transform .2s,box-shadow .2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.print-btn:hover{ transform:translateY(-3px);box-shadow:0 12px 30px rgba(255,107,53,.5); }
+.print-btn:active{ transform:scale(.97); }
+
+/* hint box */
+.hint-box{
+  background:linear-gradient(135deg,#fff9f0,#fff5e6);
+  border:2px dashed var(--orange);
+  border-radius:16px;
+  padding:16px;
+  margin-top:12px;
+}
+.hint-box-title{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--orange);
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.hint-box-text{
+  font-size:.8rem;
+  color:#888;
+  line-height:1.8;
+}
+.hint-box-text strong{
+  color:#555;
+}
+
+/* info pills */
+.info-grid{ display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.info-pill{ background:#fafafa;border:1.5px solid #f0f0f0;border-radius:14px;padding:12px;text-align:center; }
+.info-pill .ip-num{ font-size:1.6rem;font-weight:700;background:linear-gradient(135deg,var(--orange),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.info-pill .ip-label{ font-size:.75rem;color:#bbb;font-weight:600; }
+
+/* page thumbnails */
+.thumb-grid{ display:grid;grid-template-columns:repeat(3,1fr);gap:8px; }
+.thumb{
+  aspect-ratio:210/297;background:white;border-radius:6px;
+  border:2px solid #f0f0f0;cursor:pointer;
+  transition:all .2s;overflow:hidden;position:relative;
+}
+.thumb:hover{ border-color:#ddd;transform:scale(1.04);box-shadow:0 4px 14px rgba(0,0,0,.1); }
+.thumb.active{ border-color:var(--orange);box-shadow:0 0 0 2px rgba(255,107,53,.25); }
+.thumb-bar{ position:absolute;top:0;left:0;right:0;height:4px; }
+.thumb-label{ position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:.55rem;color:#ccc;font-weight:700; }
+.thumb-lines{ padding:8px 6px;display:flex;flex-direction:column;gap:3px;margin-top:6px; }
+.thumb-line{ height:2px;border-radius:2px;background:#f0f0f0; }
+.thumb-line.dark{ background:#e0e0e0;width:70%; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown{ from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes popIn{ from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+@keyframes bounceIn{ from{opacity:0;transform:scale(.5) rotate(-10deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+
+/* ── PDF PRINT STYLES ── */
+@media print{
+  body * { visibility: hidden; }
+  #previewScroll, #previewScroll * { visibility: visible; }
+  #previewScroll { position: absolute; left: 0; top: 0; width: 100%; }
+  .wb-page { page-break-after: always; break-after: page; width: 210mm; height: 297mm; box-shadow: none; border-radius: 0; }
+  .preview-scroll { height: auto; overflow: visible; background: white; }
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill"></div></div>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div>
+  <div class="blob blob-3"></div><div class="blob blob-4"></div>
+</div>
+
+<div class="topbar">
+  <a href="./explain.html" class="back-btn">← العودة</a>
+  <div class="lesson-badge">📓 كراسة الحل</div>
+</div>
+
+<header>
+  <span class="header-emoji">📓</span>
+  <h1>كراسة حل الرياضيات</h1>
+  <p>اختر إعدادات الكراسة ثم اطبعها مباشرة!</p>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls-wrap">
+  <div class="controls-box">
+    <div class="ctrl-group">
+      <span class="ctrl-label">نوع التمارين</span>
+      <select class="ctrl-select" id="typeSelect">
+        <option value="all">كل الدروس</option>
+        <option value="numbers">الأرقام</option>
+        <option value="add">الجمع</option>
+        <option value="sub">الطرح</option>
+        <option value="cmp">المقارنة</option>
+        <option value="2d">الأشكال ثنائية الأبعاد</option>
+        <option value="3d">الأشكال ثلاثية الأبعاد</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">عدد الصفحات</span>
+      <select class="ctrl-select" id="pagesSelect">
+        <option value="4">٤ صفحات</option>
+        <option value="8" selected>٨ صفحات</option>
+        <option value="12">١٢ صفحة</option>
+        <option value="16">١٦ صفحة</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">مستوى الصعوبة</span>
+      <select class="ctrl-select" id="levelSelect">
+        <option value="easy">سهل (١–١٠)</option>
+        <option value="medium">متوسط (١–٢٠)</option>
+        <option value="mixed" selected>مختلط</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">اسم الطالب</span>
+      <input type="text" class="ctrl-select" id="studentName" placeholder="اكتب الاسم هنا..." style="min-width:160px;">
+    </div>
+    <button class="generate-btn" onclick="generateWorkbook()">🔄 توليد الكراسة</button>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- SIDEBAR (RIGHT) -->
+  <div class="sidebar">
+
+    <!-- PRINT -->
+    <div class="side-card">
+      <div class="side-card-title">🖨️ طباعة الكراسة</div>
+      <button class="print-btn" onclick="printWorkbook()">🖨️ طباعة مباشرة</button>
+
+      <div class="hint-box">
+        <div class="hint-box-title">💡 عايز تحمّل PDF؟</div>
+        <div class="hint-box-text">
+          لما تدوس <strong>"طباعة مباشرة"</strong>، في نافذة الطباعة اختار:<br>
+          👉 <strong>"حفظ كملف PDF"</strong> (Save as PDF)<br>
+          من قائمة <strong>الطابعة (Destination/Printer)</strong>.<br><br>
+          كده هتحصل على ملف PDF بجودة عالية جاهز للطباعة! 📄✨
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="side-card">
+      <div class="side-card-title">📊 إحصائيات الكراسة</div>
+      <div class="info-grid">
+        <div class="info-pill"><div class="ip-num" id="stat-pages">٠</div><div class="ip-label">📄 صفحة</div></div>
+        <div class="info-pill"><div class="ip-num" id="stat-ex">٠</div><div class="ip-label">✏️ تمرين</div></div>
+        <div class="info-pill"><div class="ip-num" id="stat-types">٠</div><div class="ip-label">📚 نوع</div></div>
+        <div class="info-pill"><div class="ip-num" id="stat-level">—</div><div class="ip-label">⭐ مستوى</div></div>
+      </div>
+    </div>
+
+    <!-- PAGE THUMBS -->
+    <div class="side-card">
+      <div class="side-card-title">🗂️ صفحات الكراسة</div>
+      <div class="thumb-grid" id="thumbGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- PREVIEW (LEFT) -->
+  <div class="preview-pane">
+    <div class="preview-header">
+      <span class="preview-title">معاينة الكراسة</span>
+      <span class="page-indicator" id="pageIndicator">٠ صفحات</span>
+    </div>
+    <div class="preview-scroll" id="previewScroll"></div>
+  </div>
+
+</div>
+
+<!-- PRINT IFRAME -->
+<iframe id="printFrame" style="display:none"></iframe>
+
+<script>
+const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const rand  = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+
+const arNames = ['صفر','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة','عشرة',
+  'أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر','عشرون'];
+
+const typeColors = {
+  numbers:['#ff6b35','#ffd93d'],
+  add:    ['#4ecdc4','#06d6a0'],
+  sub:    ['#ff6b9d','#a855f7'],
+  cmp:    ['#a855f7','#4ecdc4'],
+  mixed:  ['#ff6b35','#ff6b9d'],
+  cover:  ['#ff6b35','#ff6b9d'],
+  '2d':   ['#0ea5e9','#84cc16'],
+  '3d':   ['#f43f5e','#a855f7'],
+};
+
+const typeLabels = {
+  numbers:'تعلّم الأرقام 🔢',
+  add:'الجمع ➕',
+  sub:'الطرح ➖',
+  cmp:'المقارنة ⚖️',
+  mixed:'مختلط 🎯',
+  '2d':'الأشكال ثنائية الأبعاد 📐',
+  '3d':'الأشكال ثلاثية الأبعاد 🎲',
+};
+
+// 2D Shapes data
+const shapes2D = [
+  { name: 'مربع', emoji: '⬜', sides: 4, corners: 4 },
+  { name: 'مستطيل', emoji: '▭', sides: 4, corners: 4 },
+  { name: 'مثلث', emoji: '△', sides: 3, corners: 3 },
+  { name: 'دائرة', emoji: '○', sides: 0, corners: 0 },
+  { name: 'نجمة', emoji: '⭐', sides: 10, corners: 10 },
+  { name: 'قلب', emoji: '❤️', sides: 0, corners: 0 },
+  { name: 'معيّن', emoji: '◆', sides: 4, corners: 4 },
+  { name: 'بيضاوي', emoji: '⬭', sides: 0, corners: 0 },
+];
+
+// 3D Shapes data
+const shapes3D = [
+  { name: 'مكعّب', emoji: '🎲', faces: 6, edges: 12, vertices: 8 },
+  { name: 'كرة', emoji: '⚽', faces: 0, edges: 0, vertices: 0 },
+  { name: 'أسطوانة', emoji: '🥫', faces: 3, edges: 2, vertices: 0 },
+  { name: 'هرم', emoji: '🔺', faces: 5, edges: 8, vertices: 5 },
+  { name: 'مخروط', emoji: '🍦', faces: 2, edges: 1, vertices: 1 },
+  { name: 'متوازي مستطيلات', emoji: '📦', faces: 6, edges: 12, vertices: 8 },
+];
+
+let workbookPages = [];
+let totalEx = 0;
+
+/* ═══════════ PAGE GENERATORS ═══════════ */
+
+function coverPage(studentName, pageCount){
+  return {
+    type:'cover',
+    html:`
+      <div class="wb-page type-cover cover-page">
+        <div class="cover-blobs">
+          <div class="cover-blob cover-blob-1"></div>
+          <div class="cover-blob cover-blob-2"></div>
+          <div class="cover-blob cover-blob-3"></div>
+        </div>
+        <div class="cover-emoji">📓🌈</div>
+        <div class="cover-title">كراسة حل الرياضيات<br>إحسب بذكاء كيدز</div>
+        <div class="cover-sub">كل الدروس في مكان واحد — أرقام، جمع، طرح، مقارنة، وأشكال!<br>${toAr(pageCount)} صفحة من التمارين المسلّية</div>
+        <div class="cover-label">اسم الطالب:</div>
+        <div class="cover-name-line">${studentName ? `<span style="font-size:1rem;font-weight:700;color:#333;line-height:32px;padding-right:8px;">${studentName}</span>` : ''}</div>
+        <div class="cover-label" style="margin-top:16px;">التاريخ:</div>
+        <div class="cover-name-line"></div>
+        <div class="star-row">
+          <div class="star-box">⭐</div>
+          <div class="star-box">⭐</div>
+          <div class="star-box">⭐</div>
+          <div class="star-box" style="border-color:#f0f0f0;color:#f0f0f0">⭐</div>
+          <div class="star-box" style="border-color:#f0f0f0;color:#f0f0f0">⭐</div>
+        </div>
+        <div class="wb-page-num">الغلاف</div>
+      </div>`,
+    label:'الغلاف'
+  };
+}
+
+function numbersPage(level, pageNum){
+  const max = level==='easy'?10 : level==='medium'?20 : (Math.random()>.5?10:20);
+  const nums = [];
+  while(nums.length<10){ const n=rand(1,max); if(!nums.includes(n)) nums.push(n); }
+  let ex = '';
+  nums.forEach((n,i)=>{
+    ex += `<div class="trace-box">
+      <span class="trace-big">${toAr(n)}</span>
+      <div class="trace-name">${arNames[n]||toAr(n)}</div>
+      <div class="trace-lines"><div class="trace-line"></div><div class="trace-line"></div></div>
+    </div>`;
+  });
+
+  let fill = '';
+  for(let i=0;i<8;i++){
+    const n = rand(1,max);
+    fill += `<div class="ex-item">
+      <span class="ex-item-num">${toAr(i+1)}</span>
+      ${toAr(n)} = <span class="ex-blank"></span>
+    </div>`;
+  }
+  totalEx += 18;
+
+  return {
+    type:'numbers',
+    html:`<div class="wb-page type-numbers">
+      ${pageHeader('تعلّم الأرقام 🔢',pageNum)}
+      <div class="wb-section-title">تتبع الأرقام وتعلّمها</div>
+      <div class="trace-grid" style="margin-bottom:16px">${ex}</div>
+      <div class="wb-section-title">اكتب اسم الرقم</div>
+      <div class="ex-grid ex-grid-2">${fill}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`أرقام ${pageNum}`
+  };
+}
+
+function addPage(level, pageNum){
+  const max = level==='easy'?5 : level==='medium'?9 : (Math.random()>.5?5:9);
+  let ex = '';
+  for(let i=0;i<12;i++){
+    const a=rand(1,max), b=rand(1,max);
+    ex += `<div class="ex-item">
+      <span class="ex-item-num">${toAr(i+1)}</span>
+      ${toAr(a)} + ${toAr(b)} = <span class="ex-blank"></span>
+    </div>`;
+  }
+  totalEx += 12;
+  return {
+    type:'add',
+    html:`<div class="wb-page type-add">
+      ${pageHeader('الجمع ➕',pageNum)}
+      <div class="wb-section-title">أكمل عمليات الجمع</div>
+      <div class="ex-grid ex-grid-2">${ex}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`جمع ${pageNum}`
+  };
+}
+
+function subPage(level, pageNum){
+  const max = level==='easy'?10 : level==='medium'?18 : (Math.random()>.5?10:18);
+  let ex = '';
+  for(let i=0;i<12;i++){
+    const a=rand(2,max), b=rand(1,a);
+    ex += `<div class="ex-item">
+      <span class="ex-item-num">${toAr(i+1)}</span>
+      ${toAr(a)} − ${toAr(b)} = <span class="ex-blank"></span>
+    </div>`;
+  }
+  totalEx += 12;
+  return {
+    type:'sub',
+    html:`<div class="wb-page type-sub">
+      ${pageHeader('الطرح ➖',pageNum)}
+      <div class="wb-section-title">أكمل عمليات الطرح</div>
+      <div class="ex-grid ex-grid-2">${ex}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`طرح ${pageNum}`
+  };
+}
+
+function cmpPage(level, pageNum){
+  const max = level==='easy'?10 : level==='medium'?20 : (Math.random()>.5?10:20);
+  let ex = '';
+  for(let i=0;i<12;i++){
+    const a=rand(1,max), b=rand(1,max);
+    ex += `<div class="ex-item cmp-item">
+      <span class="ex-item-num">${toAr(i+1)}</span>
+      ${toAr(a)} <span class="cmp-blank"></span> ${toAr(b)}
+    </div>`;
+  }
+  totalEx += 12;
+  return {
+    type:'cmp',
+    html:`<div class="wb-page type-cmp">
+      ${pageHeader('المقارنة ⚖️',pageNum)}
+      <div style="background:#f5edff;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.8rem;font-weight:700;color:#a855f7;display:flex;gap:16px;align-items:center;">
+        <span>تذكّر:</span>
+        <span>&gt; أكبر من</span>
+        <span>= يساوي</span>
+        <span>&lt; أصغر من</span>
+      </div>
+      <div class="wb-section-title">ضع الرمز المناسب ( &gt; = &lt; )</div>
+      <div class="ex-grid ex-grid-2">${ex}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`مقارنة ${pageNum}`
+  };
+}
+
+function mixedPage(level, pageNum){
+  const max = level==='easy'?8 : level==='medium'?15 : (Math.random()>.5?8:15);
+  let addEx='', subEx='', cmpEx='';
+  for(let i=0;i<4;i++){
+    const a=rand(1,max), b=rand(1,Math.min(a,max));
+    addEx += `<div class="ex-item"><span class="ex-item-num">${toAr(i+1)}</span>${toAr(a)}+${toAr(b)}=<span class="ex-blank"></span></div>`;
+    subEx += `<div class="ex-item"><span class="ex-item-num">${toAr(i+1)}</span>${toAr(a)}−${toAr(b)}=<span class="ex-blank"></span></div>`;
+    const c=rand(1,max),d=rand(1,max);
+    cmpEx += `<div class="ex-item cmp-item"><span class="ex-item-num">${toAr(i+1)}</span>${toAr(c)} <span class="cmp-blank"></span> ${toAr(d)}</div>`;
+  }
+  totalEx += 12;
+  return {
+    type:'mixed',
+    html:`<div class="wb-page type-mixed">
+      ${pageHeader('مراجعة مختلطة 🎯',pageNum)}
+      <div class="wb-section-title" style="background:#4ecdc4">الجمع ➕</div>
+      <div class="ex-grid ex-grid-2" style="margin-bottom:14px">${addEx}</div>
+      <div class="wb-section-title" style="background:#ff6b9d">الطرح ➖</div>
+      <div class="ex-grid ex-grid-2" style="margin-bottom:14px">${subEx}</div>
+      <div class="wb-section-title" style="background:#a855f7">المقارنة ⚖️</div>
+      <div class="ex-grid ex-grid-2">${cmpEx}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`مراجعة ${pageNum}`
+  };
+}
+
+/* ═══════════ 2D SHAPES PAGE ═══════════ */
+function shapes2DPage(pageNum){
+  let shapesHtml = '';
+  shapes2D.forEach(s => {
+    shapesHtml += `<div class="shape-2d-card">
+      <span class="shape-2d-icon">${s.emoji}</span>
+      <div class="shape-2d-name">${s.name}</div>
+      <div class="shape-2d-lines"><div class="shape-2d-line"></div><div class="shape-2d-line"></div></div>
+    </div>`;
+  });
+
+  let exHtml = '';
+  const used = [];
+  for(let i=0;i<6;i++){
+    let s;
+    do { s = shapes2D[rand(0, shapes2D.length-1)]; } while(used.includes(s.name) && used.length < shapes2D.length);
+    used.push(s.name);
+    const qType = rand(0,2);
+    let qText = '';
+    if(qType===0) qText = `عدد أضلاع ${s.name} = <span class="shape-ex-blank"></span>`;
+    else if(qType===1) qText = `عدد زوايا ${s.name} = <span class="shape-ex-blank"></span>`;
+    else qText = `اسم الشكل: <span class="shape-ex-blank"></span>`;
+
+    exHtml += `<div class="shape-ex-item">
+      <div class="shape-ex-visual">${s.emoji}</div>
+      <div class="shape-ex-info">
+        <div class="shape-ex-q">${toAr(i+1)}. ${qText}</div>
+      </div>
+    </div>`;
+  }
+  totalEx += 6;
+
+  return {
+    type:'2d',
+    html:`<div class="wb-page type-2d">
+      ${pageHeader('الأشكال ثنائية الأبعاد 📐',pageNum)}
+      <div class="wb-section-title">تعرّف على الأشكال</div>
+      <div class="shape-2d-grid" style="margin-bottom:16px">${shapesHtml}</div>
+      <div class="wb-section-title">أكمل</div>
+      <div class="shape-ex-grid">${exHtml}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`أشكال 2D ${pageNum}`
+  };
+}
+
+/* ═══════════ 3D SHAPES PAGE ═══════════ */
+function shapes3DPage(pageNum){
+  let shapesHtml = '';
+  shapes3D.forEach(s => {
+    shapesHtml += `<div class="shape-3d-card">
+      <span class="shape-3d-icon">${s.emoji}</span>
+      <div class="shape-3d-name">${s.name}</div>
+      <div class="shape-3d-faces">${toAr(s.faces)} وجوه · ${toAr(s.edges)} حواف · ${toAr(s.vertices)} رؤوس</div>
+    </div>`;
+  });
+
+  let exHtml = '';
+  const used = [];
+  for(let i=0;i<6;i++){
+    let s;
+    do { s = shapes3D[rand(0, shapes3D.length-1)]; } while(used.includes(s.name) && used.length < shapes3D.length);
+    used.push(s.name);
+    const qType = rand(0,3);
+    let qText = '';
+    if(qType===0) qText = `عدد وجوه ${s.name} = <span class="shape-3d-ex-blank"></span>`;
+    else if(qType===1) qText = `عدد حواف ${s.name} = <span class="shape-3d-ex-blank"></span>`;
+    else if(qType===2) qText = `عدد رؤوس ${s.name} = <span class="shape-3d-ex-blank"></span>`;
+    else qText = `اسم الشكل: <span class="shape-3d-ex-blank"></span>`;
+
+    exHtml += `<div class="shape-3d-ex-item">
+      <div class="shape-3d-ex-visual">${s.emoji}</div>
+      <div class="shape-3d-ex-info">
+        <div class="shape-3d-ex-q">${toAr(i+1)}. ${qText}</div>
+      </div>
+    </div>`;
+  }
+  totalEx += 6;
+
+  return {
+    type:'3d',
+    html:`<div class="wb-page type-3d">
+      ${pageHeader('الأشكال ثلاثية الأبعاد 🎲',pageNum)}
+      <div class="wb-section-title">تعرّف على الأشكال</div>
+      <div class="shape-3d-grid" style="margin-bottom:16px">${shapesHtml}</div>
+      <div class="wb-section-title">أكمل</div>
+      <div class="shape-3d-ex-grid">${exHtml}</div>
+      ${pageFooter(pageNum)}
+    </div>`,
+    label:`أشكال 3D ${pageNum}`
+  };
+}
+
+function pageHeader(title, num){
+  return `<div class="wb-page-header">
+    <div class="wb-page-logo">🧮 <span>إحسب بذكاء كيدز</span></div>
+    <div class="wb-page-meta">صفحة ${toAr(num)}</div>
+  </div>
+  <div style="margin-bottom:14px;font-size:1rem;font-weight:700;color:#1a1a2e">${title}</div>`;
+}
+
+function pageFooter(num){
+  return `<div class="wb-page-num">— ${toAr(num)} —</div>`;
+}
+
+/* ═══════════ GENERATE ═══════════ */
+function generateWorkbook(){
+  const type   = document.getElementById('typeSelect').value;
+  const pages  = parseInt(document.getElementById('pagesSelect').value);
+  const level  = document.getElementById('levelSelect').value;
+  const name   = document.getElementById('studentName').value.trim();
+
+  totalEx = 0;
+  workbookPages = [];
+
+  workbookPages.push(coverPage(name, pages));
+
+  const contentCount = pages - 1;
+  const seq = buildSequence(type, contentCount);
+  let pageNum = 1;
+  seq.forEach(t => {
+    if(t==='numbers') workbookPages.push(numbersPage(level, pageNum++));
+    else if(t==='add') workbookPages.push(addPage(level, pageNum++));
+    else if(t==='sub') workbookPages.push(subPage(level, pageNum++));
+    else if(t==='cmp') workbookPages.push(cmpPage(level, pageNum++));
+    else if(t==='2d') workbookPages.push(shapes2DPage(pageNum++));
+    else if(t==='3d') workbookPages.push(shapes3DPage(pageNum++));
+    else workbookPages.push(mixedPage(level, pageNum++));
+  });
+
+  renderPreview();
+  renderThumbs();
+  updateStats(pages, level, type);
+}
+
+function buildSequence(type, count){
+  if(type !== 'all') return Array(count).fill(type);
+  const cycle = ['numbers','add','sub','cmp','2d','3d','mixed'];
+  const seq = [];
+  for(let i=0;i<count;i++) seq.push(cycle[i % cycle.length]);
+  return seq;
+}
+
+function renderPreview(){
+  const scroll = document.getElementById('previewScroll');
+  scroll.innerHTML = workbookPages.map(p => p.html).join('');
+  document.getElementById('pageIndicator').textContent = toAr(workbookPages.length) + ' صفحات';
+}
+
+function renderThumbs(){
+  const grid = document.getElementById('thumbGrid');
+  grid.innerHTML = '';
+  workbookPages.forEach((p,i) => {
+    const c = typeColors[p.type] || typeColors.cover;
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i===0?' active':'');
+    div.innerHTML = `
+      <div class="thumb-bar" style="background:linear-gradient(90deg,${c[0]},${c[1]})"></div>
+      <div class="thumb-lines">
+        <div class="thumb-line dark"></div>
+        <div class="thumb-line"></div>
+        <div class="thumb-line dark" style="width:50%"></div>
+        <div class="thumb-line"></div>
+        <div class="thumb-line dark" style="width:80%"></div>
+        <div class="thumb-line"></div>
+      </div>
+      <div class="thumb-label">${p.label}</div>`;
+    div.onclick = () => {
+      document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+      div.classList.add('active');
+      document.querySelectorAll('.wb-page')[i]?.scrollIntoView({behavior:'smooth',block:'center'});
+    };
+    grid.appendChild(div);
+  });
+}
+
+function updateStats(pages, level, type){
+  document.getElementById('stat-pages').textContent = toAr(pages);
+  document.getElementById('stat-ex').textContent    = toAr(totalEx);
+  const typeCount = type==='all' ? '٧' : '١';
+  document.getElementById('stat-types').textContent  = typeCount;
+  const lvls = {easy:'سهل',medium:'متوسط',mixed:'مختلط'};
+  document.getElementById('stat-level').textContent  = lvls[level]||'—';
+}
+
+/* ═══════════ PRINT ═══════════ */
+function printWorkbook(){
+  if(workbookPages.length===0){ alert('الرجاء توليد الكراسة أولاً!'); return; }
+
+  const pages = document.querySelectorAll('.wb-page');
+
+  let html = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"Marhey",sans-serif;}
+  body{background:white;direction:rtl;text-align:right;}
+  .print-page{
+    width:210mm;
+    height:297mm;
+    padding:32px 28px;
+    position:relative;
+    overflow:hidden;
+    page-break-after:always;
+    break-after:page;
+    box-sizing:border-box;
+    direction:rtl;
+    text-align:right;
+    background:white;
+  }
+  .print-page:last-child{ page-break-after:auto; break-after:auto; }
+
+  /* Colors per type - solid colors for print */
+  .type-add{border-top:6px solid #4ecdc4;}
+  .type-sub{border-top:6px solid #ff6b9d;}
+  .type-cmp{border-top:6px solid #a855f7;}
+  .type-numbers{border-top:6px solid #ff6b35;}
+  .type-mixed{border-top:6px solid #ff6b35;}
+  .type-cover{border-top:6px solid #ff6b35;}
+  .type-2d{border-top:6px solid #0ea5e9;}
+  .type-3d{border-top:6px solid #f43f5e;}
+
+  .wb-page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:2px dashed #f0f0f0;direction:rtl;}
+  .wb-section-title{font-size:.8rem;font-weight:700;color:white;background:#ff6b35;padding:5px 14px;border-radius:20px;display:inline-block;margin-bottom:12px;}
+  .type-add .wb-section-title{background:#4ecdc4;}
+  .type-sub .wb-section-title{background:#ff6b9d;}
+  .type-cmp .wb-section-title{background:#a855f7;}
+  .type-2d .wb-section-title{background:#0ea5e9;}
+  .type-3d .wb-section-title{background:#f43f5e;}
+
+  .ex-grid{display:grid;gap:8px;}
+  .ex-grid-2{grid-template-columns:1fr 1fr;}
+  .ex-item{border:1.5px solid #f0f0f0;border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:8px;font-size:1.1rem;font-weight:700;color:#333;direction:rtl;}
+  .ex-blank{display:inline-block;min-width:36px;height:24px;border-bottom:2.5px solid #ddd;margin:0 4px;}
+  .ex-item-num{font-size:.7rem;color:#ccc;font-weight:600;min-width:14px;}
+  .cmp-blank{display:inline-block;width:32px;height:32px;border:2px solid #ddd;border-radius:6px;text-align:center;line-height:28px;}
+  .cmp-item{justify-content:center;}
+  .trace-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+  .trace-box{border:1.5px solid #f0f0f0;border-radius:8px;padding:8px 4px;text-align:center;}
+  .trace-big{font-size:2rem;font-weight:700;color:#f0f0f0;display:block;line-height:1;}
+  .trace-name{font-size:.65rem;color:#ccc;margin-top:4px;}
+  .trace-lines{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+  .trace-line{height:1.5px;background:#f5f5f5;border-radius:2px;}
+
+  .shape-2d-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .shape-2d-card{border:2px solid #f0f0f0;border-radius:12px;padding:10px 8px;text-align:center;}
+  .shape-2d-icon{font-size:2rem;margin-bottom:6px;display:block;}
+  .shape-2d-name{font-size:.7rem;font-weight:700;color:#555;}
+  .shape-2d-lines{display:flex;flex-direction:column;gap:3px;margin-top:8px;}
+  .shape-2d-line{height:2px;background:#f0f0f0;border-radius:2px;}
+  .shape-ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .shape-ex-item{border:2px solid #f0f0f0;border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;direction:rtl;}
+  .shape-ex-visual{font-size:2.4rem;min-width:50px;text-align:center;}
+  .shape-ex-info{flex:1;}
+  .shape-ex-q{font-size:.8rem;font-weight:700;color:#555;margin-bottom:6px;direction:rtl;}
+  .shape-ex-blank{display:inline-block;min-width:70px;height:24px;border-bottom:2.5px solid #ddd;}
+
+  .shape-3d-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .shape-3d-card{border:2px solid #f0f0f0;border-radius:12px;padding:12px 10px;text-align:center;}
+  .shape-3d-icon{font-size:2.4rem;margin-bottom:8px;display:block;}
+  .shape-3d-name{font-size:.75rem;font-weight:700;color:#555;margin-bottom:3px;}
+  .shape-3d-faces{font-size:.6rem;color:#bbb;}
+  .shape-3d-ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .shape-3d-ex-item{border:2px solid #f0f0f0;border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;direction:rtl;}
+  .shape-3d-ex-visual{font-size:2.4rem;min-width:50px;text-align:center;}
+  .shape-3d-ex-info{flex:1;}
+  .shape-3d-ex-q{font-size:.8rem;font-weight:700;color:#555;margin-bottom:6px;direction:rtl;}
+  .shape-3d-ex-blank{display:inline-block;min-width:50px;height:24px;border-bottom:2.5px solid #ddd;}
+
+  .cover-page{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;}
+  .cover-emoji{font-size:3rem;margin-bottom:16px;}
+  .cover-title{font-size:1.5rem;font-weight:700;color:#1a1a2e;margin-bottom:8px;}
+  .cover-sub{font-size:.9rem;color:#888;margin-bottom:24px;}
+  .cover-name-line{border-bottom:2px solid #f0f0f0;width:200px;height:30px;margin:0 auto 8px;}
+  .cover-label{font-size:.75rem;color:#bbb;font-weight:700;}
+  .cover-blobs{display:none;}
+  .wb-page-logo span{color:#ff6b35;}
+  .wb-page-num{text-align:center;color:#ddd;font-size:.75rem;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);}
+  .star-row{display:flex;gap:6px;justify-content:center;margin-top:18px;}
+  .star-box{width:34px;height:34px;border:2px solid #f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+
+  @media print{
+    body{margin:0;padding:0;}
+    .print-page{page-break-after:always;break-after:page;box-shadow:none;border-radius:0;}
+    .print-page:last-child{page-break-after:auto;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;}
+  }
+</style>
+</head>
+<body>`;
+
+  pages.forEach(p => {
+    const clone = p.cloneNode(true);
+    clone.classList.add('print-page');
+    clone.style.width = '210mm';
+    clone.style.height = '297mm';
+    clone.style.boxShadow = 'none';
+    clone.style.borderRadius = '0';
+    clone.style.aspectRatio = 'auto';
+    html += clone.outerHTML;
+  });
+
+  html += '</body></html>';
+
+  const frame = document.getElementById('printFrame');
+  frame.contentDocument.open();
+  frame.contentDocument.write(html);
+  frame.contentDocument.close();
+
+  setTimeout(()=>{
+    try {
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    } catch(e) {
+      console.error(e);
+    }
+  }, 800);
+}
+
+/* ═══════════ INIT ═══════════ */
+generateWorkbook();
+</script>
+</body>
+</html>

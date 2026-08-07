@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>المساحة - إحسب بذكاء</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Amiri', serif;
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #ffcc80 100%);
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    nav {
+      background: linear-gradient(90deg, #e65100, #f57c00, #e65100);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+      direction: rtl;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: "Aref Ruqaa", serif;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-logo i {
+      font-size: 28px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(135deg, #f57c00, #e65100);
+      color: white;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.3;
+    }
+
+    .hero h1 {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 42px;
+      margin-bottom: 15px;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.8;
+      position: relative;
+      opacity: 0.95;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      padding: 0 10px;
+    }
+
+    .calc-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #e65100, #ff9800, #e65100);
+    }
+
+    .calc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #e0e0e0;
+    }
+
+    .calc-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #e65100, #ff9800);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+    }
+
+    .calc-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 24px;
+      color: #e65100;
+    }
+
+    .calc-desc {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      background: #fff8e1;
+      border-radius: 10px;
+      border-right: 4px solid #ff9800;
+    }
+
+    .formula-box {
+      background: linear-gradient(135deg, #e65100, #f57c00);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: "Aref Ruqaa", serif;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(230, 81, 0, 0.2);
+      position: relative;
+    }
+
+    .formula-box .formula-sub {
+      font-size: 14px;
+      margin-top: 8px;
+      opacity: 0.9;
+      font-family: 'Amiri', serif;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 16px;
+      font-family: 'Amiri', serif;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #ff9800;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15);
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #e65100, #ff9800);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      font-family: "Aref Ruqaa", serif;
+      font-weight: 700;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(230, 81, 0, 0.4);
+    }
+
+    .calc-btn:active {
+      transform: translateY(0);
+    }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+      border-radius: 12px;
+      border: 1px solid #ffcc80;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result-box.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .final-result {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 22px;
+      color: #e65100;
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .steps-title {
+      font-family: "Aref Ruqaa", serif;
+      font-size: 18px;
+      color: #e65100;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .steps-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .steps-list li {
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 8px;
+      border-right: 3px solid #ff9800;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      transition: transform 0.2s ease;
+      animation: slideIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .steps-list li:nth-child(1) { animation-delay: 0.1s; }
+    .steps-list li:nth-child(2) { animation-delay: 0.2s; }
+    .steps-list li:nth-child(3) { animation-delay: 0.3s; }
+    .steps-list li:nth-child(4) { animation-delay: 0.4s; }
+    .steps-list li:nth-child(5) { animation-delay: 0.5s; }
+    .steps-list li:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .steps-list li:hover {
+      transform: translateX(-5px);
+      background: #fff8e1;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #e65100;
+      color: white;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: bold;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      margin-top: 40px;
+      color: #555;
+      font-size: 16px;
+    }
+
+    .footer i {
+      color: #e53935;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        width: 95%;
+      }
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <i class="ti ti-math"></i>
+      إحســـب بـذكـاء
+    </a>
+  </nav>
+
+  <div class="hero">
+    <h1>المساحة</h1>
+    <p>المساحة هي مقدار السطح الذي يشغله الشكل الهندسي. اكتشف كيفية حساب مساحة الأشكال المختلفة بخطوات مفصلة وواضحة.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- المستطيل -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-rectangle"></i></div>
+        <div class="calc-title">المستطيل</div>
+      </div>
+      <div class="calc-desc">
+        مساحة المستطيل هي حاصل ضرب الطول في العرض. يُستخدم في حساب مساحة الغرف والأرضيات والجدران.
+      </div>
+      <div class="formula-box">
+        المساحة = ط × ع
+        <div class="formula-sub">ط = الطول &nbsp;&nbsp; ع = العرض</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>الطول (ط)</label>
+          <input type="number" id="rectLength" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>العرض (ع)</label>
+          <input type="number" id="rectWidth" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcRectangle()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب المساحة
+      </button>
+      <div class="result-box" id="rectResultBox">
+        <div class="final-result" id="rectResult"></div>
+        <div class="steps-title"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="rectSteps"></ul>
+      </div>
+    </div>
+
+    <!-- المربع -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-square"></i></div>
+        <div class="calc-title">المربع</div>
+      </div>
+      <div class="calc-desc">
+        المربع هو شكل رباعي منتظم حيث جميع أضلاعه متساوية. تُحسب مساحته بضرب طول الضلع في نفسه (مربع الضلع).
+      </div>
+      <div class="formula-box">
+        المساحة = ض²
+        <div class="formula-sub">ض = طول الضلع</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>طول الضلع (ض)</label>
+          <input type="number" id="squareSide" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcSquare()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب المساحة
+      </button>
+      <div class="result-box" id="squareResultBox">
+        <div class="final-result" id="squareResult"></div>
+        <div class="steps-title"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="squareSteps"></ul>
+      </div>
+    </div>
+
+    <!-- الدائرة -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-circle"></i></div>
+        <div class="calc-title">الدائرة</div>
+      </div>
+      <div class="calc-desc">
+        الدائرة هي شكل هندسي له محيط دائري. تُحسب مساحتها بضرب π في مربع نصف القطر.
+      </div>
+      <div class="formula-box">
+        المساحة = π × نق²
+        <div class="formula-sub">π ≈ 3.14 &nbsp;&nbsp; نق = نصف القطر</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>نصف القطر (نق)</label>
+          <input type="number" id="circleRadius" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcCircle()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب المساحة
+      </button>
+      <div class="result-box" id="circleResultBox">
+        <div class="final-result" id="circleResult"></div>
+        <div class="steps-title"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="circleSteps"></ul>
+      </div>
+    </div>
+
+    <!-- المثلث -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-triangle"></i></div>
+        <div class="calc-title">المثلث</div>
+      </div>
+      <div class="calc-desc">
+        المثلث هو شكل ثلاثي الأضلاع. تُحسب مساحته بضرب القاعدة في الارتفاع ثم قسمة الناتج على اثنين.
+      </div>
+      <div class="formula-box">
+        المساحة = ½ × ق × ر
+        <div class="formula-sub">ق = القاعدة &nbsp;&nbsp; ر = الارتفاع</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>القاعدة (ق)</label>
+          <input type="number" id="triBase" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الارتفاع (ر)</label>
+          <input type="number" id="triHeight" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcTriangle()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب المساحة
+      </button>
+      <div class="result-box" id="triangleResultBox">
+        <div class="final-result" id="triangleResult"></div>
+        <div class="steps-title"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="triangleSteps"></ul>
+      </div>
+    </div>
+
+    <!-- شبه المنحرف -->
+    <div class="calc-card">
+      <div class="calc-header">
+        <div class="calc-icon"><i class="ti ti-trapezoid"></i></div>
+        <div class="calc-title">شبه المنحرف</div>
+      </div>
+      <div class="calc-desc">
+        شبه المنحرف هو شكل رباعي له قاعدتان متوازيتان. تُحسب مساحته بجمع القاعدتين وضرب الناتج في الارتفاع ثم قسمة الناتج على اثنين.
+      </div>
+      <div class="formula-box">
+        المساحة = ½ × (أ + ب) × ر
+        <div class="formula-sub">أ = القاعدة الكبرى &nbsp;&nbsp; ب = القاعدة الصغرى &nbsp;&nbsp; ر = الارتفاع</div>
+      </div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>القاعدة الكبرى (أ)</label>
+          <input type="number" id="trapA" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>القاعدة الصغرى (ب)</label>
+          <input type="number" id="trapB" placeholder="0" min="0" step="any">
+        </div>
+        <div class="input-group">
+          <label>الارتفاع (ر)</label>
+          <input type="number" id="trapHeight" placeholder="0" min="0" step="any">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcTrapezoid()">
+        <i class="ti ti-calculator" style="margin-left:8px;"></i> احسب المساحة
+      </button>
+      <div class="result-box" id="trapezoidResultBox">
+        <div class="final-result" id="trapezoidResult"></div>
+        <div class="steps-title"><i class="ti ti-list-numbers"></i> خطوات الحل:</div>
+        <ul class="steps-list" id="trapezoidSteps"></ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <i class="ti ti-heart"></i> صُمم بعناية لمساعدتك في فهم الرياضيات
+  </div>
+
+<script>
+
+function showResult(boxId, resultId, stepsId, resultText, steps) {
+  const box = document.getElementById(boxId);
+  const result = document.getElementById(resultId);
+  const stepsList = document.getElementById(stepsId);
+
+  result.innerHTML = resultText;
+  stepsList.innerHTML = '';
+
+  steps.forEach((step, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="step-num">' + (index + 1) + '</span>' + step;
+    stepsList.appendChild(li);
+  });
+
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function calcRectangle() {
+  let length = Number(document.getElementById("rectLength").value);
+  let width = Number(document.getElementById("rectWidth").value);
+
+  if (length <= 0 || width <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  let area = length * width;
+  let steps = [
+    'المعطيات: الطول = ' + length + '، العرض = ' + width,
+    'نعوض في القانون: المساحة = ط × ع',
+    'المساحة = ' + length + ' × ' + width,
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة'
+  ];
+
+  showResult('rectResultBox', 'rectResult', 'rectSteps', 
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة', steps);
+}
+
+function calcSquare() {
+  let side = Number(document.getElementById("squareSide").value);
+
+  if (side <= 0) {
+    alert("الرجاء إدخال قيمة صحيحة أكبر من صفر");
+    return;
+  }
+
+  let area = side * side;
+  let steps = [
+    'المعطى: طول الضلع = ' + side,
+    'نعوض في القانون: المساحة = ض²',
+    'المساحة = ' + side + '²',
+    'المساحة = ' + side + ' × ' + side,
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة'
+  ];
+
+  showResult('squareResultBox', 'squareResult', 'squareSteps', 
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة', steps);
+}
+
+function calcCircle() {
+  let r = Number(document.getElementById("circleRadius").value);
+
+  if (r <= 0) {
+    alert("الرجاء إدخال قيمة صحيحة أكبر من صفر");
+    return;
+  }
+
+  let r2 = r * r;
+  let area = Math.PI * r2;
+  let steps = [
+    'المعطى: نصف القطر = ' + r,
+    'نعوض في القانون: المساحة = π × نق²',
+    'أولاً نحسب مربع نصف القطر: نق² = ' + r + '² = ' + r2.toFixed(2),
+    'ثم نضرب في π: ' + r2.toFixed(2) + ' × ' + Math.PI.toFixed(2) + ' = ' + area.toFixed(2),
+    'المساحة ≈ ' + area.toFixed(2) + ' وحدة مربعة'
+  ];
+
+  showResult('circleResultBox', 'circleResult', 'circleSteps', 
+    'المساحة ≈ ' + area.toFixed(2) + ' وحدة مربعة', steps);
+}
+
+function calcTriangle() {
+  let base = Number(document.getElementById("triBase").value);
+  let height = Number(document.getElementById("triHeight").value);
+
+  if (base <= 0 || height <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  let product = base * height;
+  let area = product / 2;
+  let steps = [
+    'المعطيات: القاعدة = ' + base + '، الارتفاع = ' + height,
+    'نعوض في القانون: المساحة = ½ × ق × ر',
+    'أولاً نضرب القاعدة في الارتفاع: ' + base + ' × ' + height + ' = ' + product,
+    'ثم نقسم على ٢: ' + product + ' ÷ ٢ = ' + area,
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة'
+  ];
+
+  showResult('triangleResultBox', 'triangleResult', 'triangleSteps', 
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة', steps);
+}
+
+function calcTrapezoid() {
+  let a = Number(document.getElementById("trapA").value);
+  let b = Number(document.getElementById("trapB").value);
+  let h = Number(document.getElementById("trapHeight").value);
+
+  if (a <= 0 || b <= 0 || h <= 0) {
+    alert("الرجاء إدخال قيم صحيحة أكبر من صفر");
+    return;
+  }
+
+  let sum = a + b;
+  let product = sum * h;
+  let area = product / 2;
+  let steps = [
+    'المعطيات: القاعدة الكبرى = ' + a + '، القاعدة الصغرى = ' + b + '، الارتفاع = ' + h,
+    'نعوض في القانون: المساحة = ½ × (أ + ب) × ر',
+    'أولاً نجمع القاعدتين: ' + a + ' + ' + b + ' = ' + sum,
+    'ثم نضرب في الارتفاع: ' + sum + ' × ' + h + ' = ' + product,
+    'أخيراً نقسم على ٢: ' + product + ' ÷ ٢ = ' + area,
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة'
+  ];
+
+  showResult('trapezoidResultBox', 'trapezoidResult', 'trapezoidSteps', 
+    'المساحة = ' + area.toFixed(2) + ' وحدة مربعة', steps);
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const active = document.activeElement;
+    if (active && active.tagName === 'INPUT') {
+      const card = active.closest('.calc-card');
+      if (card) {
+        const btn = card.querySelector('.calc-btn');
+        if (btn) btn.click();
+      }
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
