@@ -1,23 +1,40 @@
-```
-# Compiled and build artifacts
-*.pyc
+```python
+# Python
 __pycache__/
-*.o
-*.obj
-dist/
-build/
-target/
-
-# Dependencies
-.venv/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
 venv/
-node_modules/
-.julia/
-.zig-cache/
-
-# Logs and temp files
+.venv/
+.venv*/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
 *.log
+.DS_Store
+Thumbs.db
+
+# Temp files
 *.tmp
+*.temp
+*.bak
+
+# Backup files
+*~
+*.backup
+*.bak
+
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
 
@@ -26,42 +43,17 @@ node_modules/
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
+# Build artifacts
+build/
+dist/
+*.egg-info/
 
-# System files
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Compression
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
 ```
