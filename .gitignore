@@ -23,6 +23,11 @@ venv/
 # Logs
 *.log
 
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
 # IDE
 .vscode/
 .idea/
@@ -34,10 +39,11 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Coverage
-coverage/
-htmlcov/
-.coverage
+# MyPy
+.mypy_cache/
+
+# Pytest
+.pytest_cache/
 
 # Compressed files
 *.zip
