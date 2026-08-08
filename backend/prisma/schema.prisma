@@ -1,0 +1,228 @@
+// إحسب بذكاء | Ihsb Bthka'a - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// USER MANAGEMENT
+// ===========================================
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  firstName         String?
+  lastName          String?
+  avatar            String?
+  role              UserRole  @default(USER)
+  language          String    @default("ar")
+  isVerified        Boolean   @default(false)
+  emailVerifiedAt   DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  subscription      Subscription?
+  aiUsage           AIUsage[]
+  aiRequests        AIRequest[]
+  payments          Payment[]
+  
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+// ===========================================
+// SUBSCRIPTION & PLANS
+// ===========================================
+
+model Plan {
+  id                    String    @id @default(uuid())
+  name                  String    @unique // free, pro, premium
+  displayName           String
+  description           String?
+  price                 Decimal   @db.Decimal(10, 2)
+  currency              String    @default("USD")
+  interval              String    @default("month") // month, year
+  trialDays             Int       @default(0)
+  
+  // AI Limits
+  aiDailyLimit          Int       @default(10)
+  aiMonthlyLimit        Int       @default(300)
+  maxTokensPerRequest   Int       @default(4000)
+  maxOutputTokens       Int       @default(2000)
+  
+  // Model Assignment
+  defaultModel          String    @default("claude-haiku-4-5")
+  availableModels       String[]
+  
+  // Features
+  features              String[]
+  isActive              Boolean   @default(true)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  subscriptions         Subscription[]
+  
+  @@index([name])
+  @@index([isActive])
+  @@map("plans")
+}
+
+model Subscription {
+  id                    String          @id @default(uuid())
+  userId                String          @unique
+  planId                String
+  status                SubscriptionStatus @default(INACTIVE)
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  cancelAtPeriodEnd     Boolean       @default(false)
+  canceledAt            DateTime?
+  trialStart            DateTime?
+  trialEnd              DateTime?
+  
+  // Payment Provider
+  provider              String?
+  providerSubscriptionId String?
+  providerCustomerId   String?
+  
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  
+  // Relations
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                  Plan            @relation(fields: [planId], references: [id])
+  
+  @@index([userId])
+  @@index([planId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+// ===========================================
+// AI USAGE TRACKING
+// ===========================================
+
+model AIUsage {
+  id                    String    @id @default(uuid())
+  userId                String
+  planId                String
+  periodStart           DateTime
+  periodEnd             DateTime
+  totalRequests         Int       @default(0)
+  totalInputTokens      BigInt    @default(0)
+  totalOutputTokens     BigInt    @default(0)
+  totalTokens           BigInt    @default(0)
+  estimatedCost         Decimal   @default(0) @db.Decimal(12, 6)
+  dailyUsage            Json      // { "2024-01-01": 5, "2024-01-02": 3 }
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                  Plan      @relation(fields: [planId], references: [id])
+  
+  @@unique([userId, periodStart])
+  @@index([userId])
+  @@map("ai_usage")
+}
+
+model AIRequest {
+  id                    String    @id @default(uuid())
+  userId                String
+  requestType           AIRequestType
+  model                 String
+  inputTokens           Int
+  outputTokens          Int
+  totalTokens           Int
+  estimatedCost         Decimal   @db.Decimal(10, 6)
+  duration              Int?      // milliseconds
+  status                String    @default("success")
+  errorMessage          String?
+  metadata              Json?
+  createdAt             DateTime  @default(now())
+  
+  // Relations
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([requestType])
+  @@index([model])
+  @@index([createdAt])
+  @@map("ai_requests")
+}
+
+enum AIRequestType {
+  CHAT
+  MATH_SOLVER
+  QUIZ_GENERATOR
+  STUDY_ASSISTANT
+  FLASHCARDS
+  EXPLANATION
+  SUMMARY
+}
+
+// ===========================================
+// PAYMENTS
+// ===========================================
+
+model Payment {
+  id                    String    @id @default(uuid())
+  userId                String
+  amount                Decimal   @db.Decimal(10, 2)
+  currency              String    @default("USD")
+  status                PaymentStatus @default(PENDING)
+  provider              String
+  providerPaymentId     String?
+  providerCustomerId    String?
+  description           String?
+  metadata              Json?
+  paidAt                DateTime?
+  failedAt              DateTime?
+  failureReason         String?
+  refundId              String?
+  refundedAt            DateTime?
+  refundAmount          Decimal?  @db.Decimal(10, 2)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([providerPaymentId])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
