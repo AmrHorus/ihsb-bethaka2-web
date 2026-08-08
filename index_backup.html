@@ -40,45 +40,45 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
    CSS CUSTOM PROPERTIES (LIGHT THEME)
    ======================================== */
 :root {
-  /* Primary Colors - Premium Green Identity */
+  /* Primary Colors */
   --primary: #228b22;
   --primary-dark: #1a6e1a;
   --primary-light: #2ecc71;
-  --primary-pale: rgba(34, 139, 34, 0.08);
+  --primary-pale: #e8f5e9;
   --primary-glow: rgba(34,139,34,0.15);
   --primary-gradient: linear-gradient(135deg, #228b22 0%, #2ecc71 100%);
   
-  /* Background - Clean & Modern */
+  /* Background Colors */
   --bg-primary: #ffffff;
   --bg-secondary: #f8faf8;
   --bg-tertiary: #f0f4f0;
-  --bg-gradient: linear-gradient(135deg, #fafcfb 0%, #f5f9f5 50%, #f0f7f0 100%);
+  --bg-gradient: linear-gradient(135deg, #f8faf8 0%, #f0f4f0 50%, #e8f5e9 100%);
   
-  /* Surface */
+  /* Surface Colors */
   --surface: #ffffff;
   --surface-hover: #f8faf8;
   --surface-active: #f0f4f0;
   
-  /* Card - Premium Glass Effect */
-  --card-bg: rgba(255, 255, 255, 0.9);
+  /* Card Styles */
+  --card-bg: rgba(255, 255, 255, 0.85);
   --card-border: rgba(34,139,34,0.12);
-  --card-shadow: 0 4px 24px rgba(0,0,0,0.06);
-  --card-shadow-hover: 0 12px 48px rgba(34,139,34,0.15);
+  --card-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  --card-shadow-hover: 0 16px 48px rgba(34,139,34,0.15);
   
-  /* Text */
+  /* Text Colors */
   --text-primary: #1a1a1a;
   --text-secondary: #4a4a4a;
   --text-muted: #7a7a7a;
   --text-disabled: #a0a0a0;
   --text-inverse: #ffffff;
   
-  /* Border */
+  /* Border Colors */
   --border-color: #e5e5e5;
   --border-light: #f0f0f0;
   --border-dark: #d0d0d0;
   --border-accent: #228b22;
   
-  /* Semantic */
+  /* Semantic Colors */
   --success: #22c55e;
   --success-bg: #dcfce7;
   --warning: #f59e0b;
@@ -88,52 +88,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   --info: #3b82f6;
   --info-bg: #dbeafe;
   
-  /* Calculator - Modern Redesign */
-  --calc-bg: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+  /* Calculator Colors */
+  --calc-bg: #f8f9fa;
   --calc-btn-bg: #ffffff;
   --calc-btn-hover: #f0f4f0;
   --calc-btn-text: #222222;
-  --calc-btn-op-bg: linear-gradient(135deg, #228b22 0%, #2ecc71 100%);
-  --calc-btn-op-hover: linear-gradient(135deg, #1a6e1a 0%, #228b22 100%);
+  --calc-btn-op-bg: #228b22;
+  --calc-btn-op-hover: #1a6e1a;
   --calc-btn-op-text: #ffffff;
-  --calc-screen-bg: linear-gradient(180deg, #ffffff 0%, #f8faf8 100%);
-  --calc-screen-text: #1a1a1a;
-  --calc-screen-border: rgba(34,139,34,0.2);
+  --calc-screen-bg: #ffffff;
+  --calc-screen-text: #222222;
+  --calc-screen-border: #e0e0e0;
   
-  /* Kids Theme - Fun & Friendly */
+  /* Kids Theme */
   --kids-primary: #ff6b35;
   --kids-secondary: #f7931e;
   --kids-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-  --kids-bg: linear-gradient(135deg, #fff5f0 0%, #fff8f3 100%);
+  --kids-bg: linear-gradient(135deg, #fff5f0 0%, #fff3e0 100%);
   
-  /* Shadows - Layered Depth */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.07);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
   --shadow-xl: 0 12px 40px rgba(0,0,0,0.1);
   --shadow-2xl: 0 20px 60px rgba(0,0,0,0.12);
-  --shadow-inner: inset 0 2px 8px rgba(0,0,0,0.04);
   
-  /* Border Radius - Smooth Curves */
+  /* Border Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
-  --radius-2xl: 28px;
-  --radius-3xl: 36px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
   
-  /* Transitions - Smooth & Natural */
+  /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
-  /* Focus & Glass */
+  /* Focus Ring */
   --focus-ring: 0 0 0 3px rgba(34,139,34,0.3);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --backdrop-blur: blur(16px);
+  
+  /* Glass Effect */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --backdrop-blur: blur(12px);
 }
 
 /* ========================================
