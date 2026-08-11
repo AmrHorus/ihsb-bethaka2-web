@@ -7,53 +7,69 @@ dist/
 build/
 target/
 
-# Python
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+*.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python related
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-env/
 venv/
 .venv/
-.env
-.env.local
-.env.*
+.venv-local/
 
-# Logs
-*.log
-
-# Coverage
-.coverage
+# Coverage reports
 coverage/
 htmlcov/
+.coverage
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
+# Testing
+.nyc_output/
+.mypy_cache/
+.pytest_cache/
+.jest/
 
-# OS
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# MyPy
-.mypy_cache/
+# Compiled files
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.exe
+*.out
 
-# Pytest
-.pytest_cache/
-
-# Compressed files
+# Archives
 *.zip
-*.gz
 *.tar
+*.gz
 *.tgz
 *.bz2
 *.xz
 *.7z
 *.rar
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
 *.zst
 *.lz4
 *.lzh
@@ -61,11 +77,8 @@ Thumbs.db
 *.arj
 *.rpm
 *.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
+
+# Temporary files
+*.tmp
+*.temp
 ```
